@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.example.plantsearchrest.dto.PlantDto;
 import net.example.plantsearchrest.mapper.PlantMapper;
+import net.example.plantsearchrest.model.PlantFilterModel;
 import net.example.plantsearchrest.service.PlantService;
+import net.example.plantsearchrest.utils.PlantFilterQueryBuilder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -52,8 +54,14 @@ public class PlantController {
         return list;
     }
 
-    @GetMapping("/filter")
-    public List<PlantDto> plantListByKeyword(@RequestParam String keyword) {
-        throw new UnsupportedOperationException();
+    @PostMapping("/filter")
+    public List<PlantDto> plantListByCriterias(@RequestBody PlantFilterModel filter) {
+        String query = PlantFilterQueryBuilder.buildQuery(filter);
+
+        log.info("IN plantListByCriterias - created next query {}", query);
+
+        return plantService.executeQuery(query, filter.getSize(), filter.getPage()).stream()
+                .map(plantMapper::mapEntityToDto)
+                .collect(Collectors.toList());
     }
 }

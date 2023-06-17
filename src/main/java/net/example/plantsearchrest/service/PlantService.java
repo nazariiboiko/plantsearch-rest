@@ -1,6 +1,5 @@
 package net.example.plantsearchrest.service;
 
-import net.example.plantsearchrest.PlantSearchRestApplication;
 import net.example.plantsearchrest.entity.PlantEntity;
 
 import java.util.HashMap;
@@ -12,6 +11,7 @@ public interface PlantService {
     PlantEntity getById(long id);
     PlantEntity getByName(String name);
     List<PlantEntity> findTop4ByName(String name);
-    List<PlantEntity> filterPlants(HashMap<String, String> plantCriterias);
     long getTotalRowCount();
+
+    List<PlantEntity> executeQuery(String query, int size, int page);
 }

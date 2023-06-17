@@ -67,11 +67,6 @@ public class PlantServiceImpl implements PlantService {
         return new ArrayList<PlantEntity>();
     }
 
-    @Override
-    public List<PlantEntity> filterPlants(HashMap<String, String> plantCriterias) {
-        return null;
-    }
-
     private List<PlantEntity> findTop4ByUaName(String name) {
         return plantRep.findTop4ByNameIsContainingIgnoreCase(name);
     }
@@ -84,5 +79,14 @@ public class PlantServiceImpl implements PlantService {
     public long getTotalRowCount() {
         log.info("IN getTotalRowCount | return current count");
         return plantRep.count();
+    }
+
+    @Override
+    public List<PlantEntity> executeQuery(String query, int size, int page) {
+        log.info("IN executeQuery - executed {} with size={} and page={}", query, size, page);
+        return entityManager.createQuery(query, PlantEntity.class)
+                .setFirstResult((page - 1) * size)
+                .setMaxResults(page * size)
+                .getResultList();
     }
 }

@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
 
-import java.util.stream.IntStream;
-
 @Data
 @Entity
 @Table(name="users")
