@@ -21,7 +21,7 @@ public class JwtUserDetailsService implements UserDetailsService {
     private final UserService userService;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity userEntity =  userService.findByUsername(username);
+        UserEntity userEntity =  userService.findByLogin(username);
 
         if(userEntity == null)
             throw new UsernameNotFoundException("User with username "+username+" not found");

@@ -14,13 +14,20 @@ public class PlantFilterQueryBuilder {
 
             PlantFilterDataModel filterDataModel = filter.getData();
 
-            //1=1 if criterias are empty;
             StringBuilder query = new StringBuilder("SELECT p FROM PlantEntity p WHERE 1=1 ");
 
             List<String> conditions = new ArrayList<>();
 
-            if (!StringUtils.isEmpty(filterDataModel.getName())) {
-                conditions.add("name = '" + filterDataModel.getName() + "'");
+            if(filterDataModel.getName() != null && filterDataModel.getName().length() > 2) {
+                if (Character.UnicodeBlock.of(filterDataModel.getName().charAt(0)) == Character.UnicodeBlock.CYRILLIC) {
+                    if (!StringUtils.isEmpty(filterDataModel.getName())) {
+                        conditions.add("name LIKE '%" + filterDataModel.getName() + "%'");
+                    }
+                } else if (Character.UnicodeBlock.of(filterDataModel.getName().charAt(0)) == Character.UnicodeBlock.BASIC_LATIN) {
+                    if (!StringUtils.isEmpty(filterDataModel.getName())) {
+                        conditions.add("p.latinName LIKE '%" + filterDataModel.getName() + "%'");
+                    }
+                }
             }
 
             if (filterDataModel.getHabitus() != null && !filterDataModel.getHabitus().isEmpty()) {
@@ -52,7 +59,7 @@ public class PlantFilterQueryBuilder {
             }
 
             if (filterDataModel.getFloweringPeriod() != null && !filterDataModel.getFloweringPeriod().isEmpty()) {
-                conditions.add("p.floweringPeriod IN ('" + String.join("', '", filterDataModel.getFloweringPeriod()) + "')");
+                conditions.add("p.floweringPeriod LIKE '%" + String.join("%' OR p.floweringPeriod LIKE '%", filterDataModel.getPh()) + "%'");
             }
 
             if (filterDataModel.getPlantType() != null && !filterDataModel.getPlantType().isEmpty()) {
@@ -64,7 +71,7 @@ public class PlantFilterQueryBuilder {
             }
 
             if (filterDataModel.getPh() != null && !filterDataModel.getPh().isEmpty()) {
-                conditions.add("p.ph IN ('" + String.join("', '", filterDataModel.getPh()) + "')");
+                conditions.add("p.ph LIKE '%" + String.join("%' OR p.ph LIKE '%", filterDataModel.getPh()) + "%'");
             }
 
             if (filterDataModel.getSoilMoisture() != null && !filterDataModel.getSoilMoisture().isEmpty()) {
@@ -88,7 +95,24 @@ public class PlantFilterQueryBuilder {
                 conditions.add("p.summerColor LIKE '%" + String.join("%' OR p.summerColor LIKE '%", subdividedColors) + "%'");
             }
 
-            System.out.println(conditions.size());
+            if (filterDataModel.getAutumnColor() != null && !filterDataModel.getAutumnColor().isEmpty()) {
+                List<String> subdividedColors = filterDataModel.getAutumnColor()
+                        .stream()
+                        .map(color -> color.substring(4))
+                        .collect(Collectors.toList());
+
+                conditions.add("p.autumnColor LIKE '%" + String.join("%' OR p.autumnColor LIKE '%", subdividedColors) + "%'");
+            }
+
+            if (filterDataModel.getFloweringColor() != null && !filterDataModel.getFloweringColor().isEmpty()) {
+                List<String> subdividedColors = filterDataModel.getFloweringColor()
+                        .stream()
+                        .map(color -> color.substring(4))
+                        .collect(Collectors.toList());
+
+                conditions.add("p.floweringColor LIKE '%" + String.join("%' OR p.floweringColor LIKE '%", subdividedColors) + "%'");
+            }
+
             if(conditions.size() != 0)
                 query.append(" AND ").append(String.join(" AND ", conditions));
 
@@ -96,21 +120,3 @@ public class PlantFilterQueryBuilder {
         }
 
 }
-
-/*
-    SELECT * FROM plants
-         WHERE habitus IN ('дельтовидна')
-         AND color LIKE '%жовт%' OR color LIKE '%зелен%'
-         LIMIT 20 OFFSET 0
-
-
-    @JsonProperty("summerColor")
-    private List<String> summerColor;
-
-    @JsonProperty("autumnColor")
-    private List<String> autumnColor;
-
-    @JsonProperty("floweringColor")
-    private List<String> floweringColor;
-
-    */

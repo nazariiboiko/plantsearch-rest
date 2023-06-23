@@ -3,10 +3,12 @@ package net.example.plantsearchrest.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.example.plantsearchrest.dto.PlantDto;
+import net.example.plantsearchrest.dto.PlantListDto;
 import net.example.plantsearchrest.mapper.PlantMapper;
 import net.example.plantsearchrest.model.PlantFilterModel;
 import net.example.plantsearchrest.service.PlantService;
 import net.example.plantsearchrest.utils.PlantFilterQueryBuilder;
+import net.example.plantsearchrest.utils.PlantListDtoBuilder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -55,13 +57,15 @@ public class PlantController {
     }
 
     @PostMapping("/filter")
-    public List<PlantDto> plantListByCriterias(@RequestBody PlantFilterModel filter) {
+    public PlantListDto plantListByCriterias(@RequestBody PlantFilterModel filter) {
         String query = PlantFilterQueryBuilder.buildQuery(filter);
 
         log.info("IN plantListByCriterias - created next query {}", query);
 
-        return plantService.executeQuery(query, filter.getSize(), filter.getPage()).stream()
+        List<PlantDto> list = plantService.executeQuery(query).stream()
                 .map(plantMapper::mapEntityToDto)
                 .collect(Collectors.toList());
+
+        return PlantListDtoBuilder.create(list, filter.getPage(), filter.getSize());
     }
 }

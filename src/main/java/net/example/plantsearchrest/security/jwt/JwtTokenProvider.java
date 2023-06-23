@@ -87,7 +87,7 @@ public class JwtTokenProvider {
     }
 
     public String authenticate(String username, String password) throws JwtAuthenticationException {
-        UserEntity userEntity = userService.findByUsername(username);
+        UserEntity userEntity = userService.findByLogin(username);
 
         if(userEntity == null) {
             throw new JwtAuthenticationException("User not found");

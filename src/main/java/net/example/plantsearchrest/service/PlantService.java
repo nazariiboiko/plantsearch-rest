@@ -13,5 +13,5 @@ public interface PlantService {
     List<PlantEntity> findTop4ByName(String name);
     long getTotalRowCount();
 
-    List<PlantEntity> executeQuery(String query, int size, int page);
+    List<PlantEntity> executeQuery(String query);
 }

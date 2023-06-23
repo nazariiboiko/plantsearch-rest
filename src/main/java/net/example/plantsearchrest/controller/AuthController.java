@@ -9,12 +9,11 @@ import net.example.plantsearchrest.mapper.UserMapper;
 import net.example.plantsearchrest.security.jwt.JwtTokenProvider;
 import net.example.plantsearchrest.service.UserService;
 import net.example.plantsearchrest.dto.UserDto;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,5 +54,14 @@ public class AuthController {
         log.info("IN register - user {} has been registered", userDto.getLogin());
 
         return login(new AuthRequestDto(userDto.getLogin(), userDto.getPassword()));
+    }
+
+    @GetMapping("register")
+    public ResponseEntity<String> checkLogin(@RequestParam String login) {
+        if (userService.findByLogin(login) == null) {
+            return ResponseEntity.ok("Login is available");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Login is already taken");
+        }
     }
 }

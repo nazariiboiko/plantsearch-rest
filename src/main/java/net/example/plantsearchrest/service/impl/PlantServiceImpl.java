@@ -82,11 +82,9 @@ public class PlantServiceImpl implements PlantService {
     }
 
     @Override
-    public List<PlantEntity> executeQuery(String query, int size, int page) {
-        log.info("IN executeQuery - executed {} with size={} and page={}", query, size, page);
+    public List<PlantEntity> executeQuery(String query) {
+        log.info("IN executeQuery - executed {}", query);
         return entityManager.createQuery(query, PlantEntity.class)
-                .setFirstResult((page - 1) * size)
-                .setMaxResults(page * size)
                 .getResultList();
     }
 }
