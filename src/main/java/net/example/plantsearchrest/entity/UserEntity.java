@@ -1,8 +1,11 @@
 package net.example.plantsearchrest.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
+
+import java.util.List;
 
 @Data
 @Entity
@@ -24,6 +27,10 @@ public class UserEntity extends BaseEntity{
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private Status status;
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Favourite> favourites;
 
     @ToString.Include(name = "password")
     private String maskPassword() {

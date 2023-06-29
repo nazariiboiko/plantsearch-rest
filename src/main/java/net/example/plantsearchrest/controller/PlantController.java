@@ -4,11 +4,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.example.plantsearchrest.dto.PlantDto;
 import net.example.plantsearchrest.dto.PlantListDto;
+import net.example.plantsearchrest.entity.PlantEntity;
 import net.example.plantsearchrest.mapper.PlantMapper;
 import net.example.plantsearchrest.model.PlantFilterModel;
 import net.example.plantsearchrest.service.PlantService;
 import net.example.plantsearchrest.utils.PlantFilterQueryBuilder;
 import net.example.plantsearchrest.utils.PlantListDtoBuilder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,17 +22,20 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/plant")
 @RequiredArgsConstructor
+@RequestMapping("/api/plants")
 public class PlantController {
 
     private final PlantService plantService;
     private final PlantMapper plantMapper = PlantMapper.INSTANCE;
 
     @GetMapping
-    public List<PlantDto> plantList() {
-        log.info("IN plantList | return all objects");
-        return plantService.getAll().stream()
+    public List<PlantDto> plantList(
+            @RequestParam(value = "page", required = false, defaultValue ="0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "20") int size) {
+        log.info("IN plantList | return page {} in total {} objects", page, size);
+
+        return plantService.getAll(PageRequest.of(page, size)).stream()
                 .map(plantMapper::mapEntityToDto)
                 .collect(Collectors.toList());
     }
@@ -67,5 +76,14 @@ public class PlantController {
                 .collect(Collectors.toList());
 
         return PlantListDtoBuilder.create(list, filter.getPage(), filter.getSize());
+    }
+
+    @PostMapping("/update")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity updatePlant(@RequestBody PlantDto plantDto) {
+        log.info("IN updatePlant - trying to update plant id {}", plantDto.getId());
+        PlantEntity plant = plantMapper.mapDtoToEntity(plantDto);
+        plantService.update(plant);
+        return ResponseEntity.ok(null);
     }
 }

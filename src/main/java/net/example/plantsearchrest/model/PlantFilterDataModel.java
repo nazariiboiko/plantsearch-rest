@@ -7,7 +7,8 @@ import java.util.List;
 
 @Data
 public class PlantFilterDataModel {
-    private String name; //UNSUPPORED
+    @JsonProperty("name")
+    private String name;
 
     @JsonProperty("habitus")
     private List<String> habitus;

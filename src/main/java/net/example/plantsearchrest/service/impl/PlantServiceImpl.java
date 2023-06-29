@@ -2,15 +2,18 @@ package net.example.plantsearchrest.service.impl;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.example.plantsearchrest.entity.PlantEntity;
+import net.example.plantsearchrest.mapper.PlantMapper;
 import net.example.plantsearchrest.repository.PlantRepository;
 import net.example.plantsearchrest.service.PlantService;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.IntStream;
@@ -32,11 +35,15 @@ public class PlantServiceImpl implements PlantService {
     }
 
     @Override
+    public Page<PlantEntity> getAll(Pageable pageable) {
+        return plantRep.findAll(pageable);
+    }
+
+    @Override
     public List<PlantEntity> getRandom(int amount) {
         log.info("IN getRandom | return {} objects", amount);
-        long count = getTotalRowCount();
         List<PlantEntity> randomList = new ArrayList<>();
-        IntStream.range(0, amount).forEach(x -> randomList.add(plantRep.getReferenceById(Math.abs(random.nextInt() % count - 2) + 1)));
+        IntStream.range(0, amount).forEach(x -> randomList.add(plantRep.getReferenceById((long) (Math.abs(random.nextInt() % 500) + 1))));
         return randomList;
     }
 
@@ -86,5 +93,13 @@ public class PlantServiceImpl implements PlantService {
         log.info("IN executeQuery - executed {}", query);
         return entityManager.createQuery(query, PlantEntity.class)
                 .getResultList();
+    }
+
+    @Override
+    @Transactional
+    public void update(PlantEntity entity) {
+        log.info("IN update - updated id:{}", entity.getId());
+        PlantEntity plant = plantRep.findById(entity.getId()).orElseThrow();
+        PlantMapper.INSTANCE.updatePlantEntity(entity, plant);
     }
 }

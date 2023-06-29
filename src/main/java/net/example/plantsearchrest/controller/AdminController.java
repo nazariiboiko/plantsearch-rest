@@ -17,23 +17,8 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/admin")
 @RequiredArgsConstructor
+@RequestMapping("/api/admin")
 public class AdminController {
-    private final PlantService plantService;
-    private final UserService userService;
 
-    @GetMapping("/users")
-    public List<UserDto> getAllUsers() {
-        return userService.getAll().stream()
-                .map(UserMapper.INSTANCE::mapEntityToDto)
-                .collect(Collectors.toList());
-    }
-
-    @GetMapping("/plants")
-    public List<PlantDto> getAllPlants() {
-        return plantService.getAll().stream()
-                .map(PlantMapper.INSTANCE::mapEntityToDto)
-                .collect(Collectors.toList());
-    }
 }
