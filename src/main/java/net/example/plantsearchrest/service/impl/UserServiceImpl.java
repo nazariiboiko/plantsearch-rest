@@ -1,14 +1,12 @@
 package net.example.plantsearchrest.service.impl;
 
-import jakarta.transaction.Transactional;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.example.plantsearchrest.entity.PlantEntity;
 import net.example.plantsearchrest.entity.Role;
 import net.example.plantsearchrest.entity.Status;
 import net.example.plantsearchrest.entity.UserEntity;
 import net.example.plantsearchrest.exception.RegistryException;
-import net.example.plantsearchrest.mapper.PlantMapper;
 import net.example.plantsearchrest.mapper.UserMapper;
 import net.example.plantsearchrest.repository.UserRepository;
 import net.example.plantsearchrest.service.UserService;
@@ -71,6 +69,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void create() {
+        log.info("IN create");
+    }
+
+    @Override
     public void delete(Long id) {
         log.info("IN delete - user: {} successfully deleted", id);
         userRepository.deleteById(id);
@@ -80,7 +83,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void update(UserEntity entity) {
         log.info("IN update - updated id: {}", entity.getId());
-        UserEntity user = userRepository.findById(entity.getId()).orElseThrow();
+        UserEntity user = userRepository.findById(entity.getId()).orElseThrow(null);
         UserMapper.INSTANCE.updateUserEntity(entity, user);
     }
 
@@ -89,7 +92,7 @@ public class UserServiceImpl implements UserService {
     public void setStatus(Long id, Status status) {
         log.info("IN block - blocked {} user", id);
         userRepository.findById(id)
-                .orElseThrow()
+                .orElseThrow(null)
                 .setStatus(status);
     }
 

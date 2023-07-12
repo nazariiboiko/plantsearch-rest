@@ -1,10 +1,9 @@
 package net.example.plantsearchrest.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.Fetch;
-import org.springframework.context.annotation.Lazy;
+
+import javax.persistence.*;
 
 @Data
 @Entity

@@ -3,6 +3,7 @@ package net.example.plantsearchrest.mapper;
 import net.example.plantsearchrest.dto.PlantDto;
 import net.example.plantsearchrest.entity.PlantEntity;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
@@ -12,5 +13,7 @@ public interface PlantMapper {
     PlantEntity mapDtoToEntity(PlantDto plantDto);
     PlantDto mapEntityToDto(PlantEntity plantEntity);
     void updatePlantEntity(PlantEntity from, @MappingTarget PlantEntity to);
+    void updatePlantEntity(PlantDto plantDto, @MappingTarget PlantEntity plantEntity);
+
 
 }

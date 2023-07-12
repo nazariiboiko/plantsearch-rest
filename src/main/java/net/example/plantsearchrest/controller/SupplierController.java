@@ -2,11 +2,15 @@ package net.example.plantsearchrest.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.example.plantsearchrest.api.SupplierApi;
+import net.example.plantsearchrest.dto.PageDto;
 import net.example.plantsearchrest.dto.SupplierDto;
 import net.example.plantsearchrest.mapper.SupplierMapper;
 import net.example.plantsearchrest.service.SupplierService;
+import net.example.plantsearchrest.utils.PageUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,20 +22,25 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/suppliers")
-public class SupplierController {
+public class SupplierController implements SupplierApi {
 
     private final SupplierService supplierService;
     private final SupplierMapper supplierMapper = SupplierMapper.INSTANCE;
-    @GetMapping
-    public List<SupplierDto> getAllSuppliers(
-            @RequestParam(value = "page", required = false, defaultValue ="0") int page,
-            @RequestParam(value = "size", required = false, defaultValue = "20") int size)
+    @Override
+    public PageDto<SupplierDto> getSupplierList(Pageable pageable)
     {
-        log.info("IN getAllSuppliers | return page {} in total {} objects", page, size);
+        log.info("IN getAllSuppliers | return page {} in total {} objects", pageable.getPageNumber(), pageable.getPageSize());
 
-        return supplierService.getAll(PageRequest.of(page, size)).stream()
+        List<SupplierDto> list = supplierService.getAll().stream()
                 .map(supplierMapper::mapEntityToDto)
                 .collect(Collectors.toList());
+
+        return PageUtil.create(list, pageable.getPageNumber(), pageable.getPageSize());
+    }
+
+    @Override
+    public SupplierDto getSupplierById(long id) {
+        log.info("IN getSupplierById - trying to find id {}", id);
+        return supplierMapper.mapEntityToDto(supplierService.getById(id));
     }
 }

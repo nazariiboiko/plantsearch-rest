@@ -3,8 +3,6 @@ package net.example.plantsearchrest.security.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import net.example.plantsearchrest.entity.Role;
 import net.example.plantsearchrest.entity.Status;
@@ -19,6 +17,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
 
@@ -32,7 +32,7 @@ public class JwtTokenProvider {
 
     @Value("${jwt.token.secret}")
     private String secret;
-    @Value("${jwt.token.expired}") //1h
+    @Value("${jwt.token.expired}") //10h
     private Integer validityInMiliseconds;
 
     @PostConstruct

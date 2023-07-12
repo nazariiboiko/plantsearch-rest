@@ -12,6 +12,7 @@ import java.util.List;
 public interface PlantRepository extends JpaRepository<PlantEntity, Long> {
     PlantEntity getByName(String name);
     Page<PlantEntity> findAll(Pageable pageable);
-    List<PlantEntity> findTop4ByNameIsContainingIgnoreCase(String name);
-    List<PlantEntity> findTop4ByLatinNameIsContainingIgnoreCase(String name);
+
+    List<PlantEntity> findByNameIsContainingIgnoreCase(String name);
+    List<PlantEntity> findByLatinNameIsContainingIgnoreCase(String name);
 }

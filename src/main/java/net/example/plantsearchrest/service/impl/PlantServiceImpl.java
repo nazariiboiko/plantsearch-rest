@@ -1,14 +1,17 @@
 package net.example.plantsearchrest.service.impl;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.example.plantsearchrest.dto.PlantDto;
 import net.example.plantsearchrest.entity.PlantEntity;
 import net.example.plantsearchrest.mapper.PlantMapper;
+import net.example.plantsearchrest.model.PlantFilterModel;
 import net.example.plantsearchrest.repository.PlantRepository;
 import net.example.plantsearchrest.service.PlantService;
+import net.example.plantsearchrest.utils.PlantEntityCriteriaBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +28,7 @@ public class PlantServiceImpl implements PlantService {
 
     private final PlantRepository plantRep;
     private final Random random = new Random();
+    private final PlantMapper plantMapper = PlantMapper.INSTANCE;
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -35,22 +39,17 @@ public class PlantServiceImpl implements PlantService {
     }
 
     @Override
-    public Page<PlantEntity> getAll(Pageable pageable) {
-        return plantRep.findAll(pageable);
-    }
-
-    @Override
     public List<PlantEntity> getRandom(int amount) {
         log.info("IN getRandom | return {} objects", amount);
         List<PlantEntity> randomList = new ArrayList<>();
-        IntStream.range(0, amount).forEach(x -> randomList.add(plantRep.getReferenceById((long) (Math.abs(random.nextInt() % 500) + 1))));
+        IntStream.range(0, amount).forEach(x -> randomList.add(plantRep.getById((long) (Math.abs(random.nextInt() % 500) + 1))));
         return randomList;
     }
 
     @Override
     public PlantEntity getById(long id) {
         log.info("IN getById | return object with {} id", id);
-        return plantRep.getReferenceById(id);
+        return plantRep.getById(id);
     }
 
     @Override
@@ -60,26 +59,26 @@ public class PlantServiceImpl implements PlantService {
     }
 
     @Override
-    public List<PlantEntity> findTop4ByName(String name) {
+    public List<PlantEntity> findByMatchingName(String name) {
 
         if (Character.UnicodeBlock.of(name.charAt(1)) == Character.UnicodeBlock.CYRILLIC) {
-            log.info("IN findTop4MatchingByName| return objects by cyryllic name {}", name);
-            return findTop4ByUaName(name);
+            log.info("IN findByMatchingName| return objects by cyryllic name {}", name);
+            return findByUaName(name);
         } else if (Character.UnicodeBlock.of(name.charAt(0)) == Character.UnicodeBlock.BASIC_LATIN) {
-            log.info("IN findTop4MatchingByName| return objects by latin name {}", name);
-            return findTop4ByLaName(name);
+            log.info("IN finByMatchingName| return objects by latin name {}", name);
+            return findByLaName(name);
         } else {
-            log.error("IN findTop4MatchingByName| not recognized symbol {}", name);
+            log.error("IN findByMatchingName| not recognized symbol {}", name);
         }
         return new ArrayList<PlantEntity>();
     }
 
-    private List<PlantEntity> findTop4ByUaName(String name) {
-        return plantRep.findTop4ByNameIsContainingIgnoreCase(name);
+    private List<PlantEntity> findByUaName(String name) {
+        return plantRep.findByNameIsContainingIgnoreCase(name);
     }
 
-    private List<PlantEntity> findTop4ByLaName(String name) {
-        return plantRep.findTop4ByLatinNameIsContainingIgnoreCase(name);
+    private List<PlantEntity> findByLaName(String name) {
+        return plantRep.findByLatinNameIsContainingIgnoreCase(name);
     }
 
     @Override
@@ -89,17 +88,39 @@ public class PlantServiceImpl implements PlantService {
     }
 
     @Override
-    public List<PlantEntity> executeQuery(String query) {
-        log.info("IN executeQuery - executed {}", query);
-        return entityManager.createQuery(query, PlantEntity.class)
-                .getResultList();
+    public List<PlantEntity> getAllByCriterias(PlantFilterModel filter) {
+        return PlantEntityCriteriaBuilder.buildQuery(filter, entityManager);
     }
 
     @Override
     @Transactional
-    public void update(PlantEntity entity) {
-        log.info("IN update - updated id:{}", entity.getId());
-        PlantEntity plant = plantRep.findById(entity.getId()).orElseThrow();
-        PlantMapper.INSTANCE.updatePlantEntity(entity, plant);
+    public PlantEntity create(PlantDto plant) {
+        PlantEntity entity = new PlantEntity();
+        entity.setId(-1L);
+        plantMapper.updatePlantEntity(plant, entity);
+        PlantEntity instance = plantRep.save(entity);
+        log.info("IN create - created id:{}", instance.getId());
+        return instance;
+    }
+
+    @Override
+    @Transactional
+    public void update(PlantDto entity) {
+        if(entity.getId() == null) {
+            create(entity);
+        }
+        log.info("IN update - starting update plant id:{}", entity.getId());
+        PlantEntity plant = plantRep.findById(entity.getId()).orElseThrow(null);
+        if(plant != null) {
+            log.info("IN update - previous values: {}", plant);
+            log.info("IN update - current values: {}", entity);
+            PlantMapper.INSTANCE.updatePlantEntity(entity, plant);
+        }
+    }
+
+    @Override
+    public void delete(long id) {
+        plantRep.deleteById(id);
+        log.info("IN delete - plant id {} has been deleted successfully", id);
     }
 }

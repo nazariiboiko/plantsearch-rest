@@ -2,20 +2,19 @@ package net.example.plantsearchrest.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.example.plantsearchrest.api.PlantApi;
+import net.example.plantsearchrest.dto.PageDto;
 import net.example.plantsearchrest.dto.PlantDto;
-import net.example.plantsearchrest.dto.PlantListDto;
 import net.example.plantsearchrest.entity.PlantEntity;
 import net.example.plantsearchrest.mapper.PlantMapper;
 import net.example.plantsearchrest.model.PlantFilterModel;
 import net.example.plantsearchrest.service.PlantService;
-import net.example.plantsearchrest.utils.PlantFilterQueryBuilder;
-import net.example.plantsearchrest.utils.PlantListDtoBuilder;
+import net.example.plantsearchrest.utils.PageUtil;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,67 +22,81 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/plants")
-public class PlantController {
+public class PlantController implements PlantApi {
 
     private final PlantService plantService;
     private final PlantMapper plantMapper = PlantMapper.INSTANCE;
 
-    @GetMapping
-    public List<PlantDto> plantList(
-            @RequestParam(value = "page", required = false, defaultValue ="0") int page,
-            @RequestParam(value = "size", required = false, defaultValue = "20") int size) {
-        log.info("IN plantList | return page {} in total {} objects", page, size);
+    @Override
+    public PageDto<PlantDto> getPlantList(Pageable pageable) {
+        log.info("IN getPlantList | return page {} with size {} objects", pageable.getPageNumber(), pageable.getPageSize());
 
-        return plantService.getAll(PageRequest.of(page, size)).stream()
+        List<PlantDto> list = plantService.getAll().stream()
                 .map(plantMapper::mapEntityToDto)
                 .collect(Collectors.toList());
+        return PageUtil.create(list, pageable.getPageNumber(), pageable.getPageSize());
     }
 
-    @GetMapping("/{id}")
-    public PlantDto plantByIndex(@PathVariable long id) {
+    @Override
+    public PlantDto getPlantById(long id) {
         log.info("IN plantByIndex | return object with {} id", id);
         return plantMapper.mapEntityToDto(plantService.getById(id));
     }
 
-    @GetMapping("/random")
-    public List<PlantDto> plantListRandom(@RequestParam int amount) {
+    @Override
+    public List<PlantDto> getRandomPlantList(int amount) {
+
         log.info("IN plantListRandom | return {} objects", amount);
+        if(amount < 1)
+            amount = 1;
         return plantService.getRandom(amount).stream()
                 .map(plantMapper::mapEntityToDto)
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/search")
-    public List<PlantDto> plantListTop4ByMatchingName(@RequestParam String query) {
-        List<PlantDto> list = plantService.findTop4ByName(query).stream()
+    @Override
+    public PageDto<PlantDto> searchPlantsByName(String keyword, Pageable pageable) {
+        List<PlantDto> list = plantService.findByMatchingName(keyword).stream()
                 .map(plantMapper::mapEntityToDto)
                 .collect(Collectors.toList());
 
-        log.info("IN searchSimilarByName | return {} objects for {} query", list.size(), query);
-
-        return list;
+        log.info("IN searchSimilarByName | return {} objects for {} query", list.size(), keyword);
+        return PageUtil.create(list, pageable.getPageNumber(), pageable.getPageSize());
     }
 
-    @PostMapping("/filter")
-    public PlantListDto plantListByCriterias(@RequestBody PlantFilterModel filter) {
-        String query = PlantFilterQueryBuilder.buildQuery(filter);
+    @Override
+    public PageDto<PlantDto> filterPlants(PlantFilterModel filter, Pageable pageable) {
 
-        log.info("IN plantListByCriterias - created next query {}", query);
+        log.info("IN filterPlants - received filter criterias {}" + filter.toString());
 
-        List<PlantDto> list = plantService.executeQuery(query).stream()
+        List<PlantDto> list = plantService.getAllByCriterias(filter).stream()
                 .map(plantMapper::mapEntityToDto)
                 .collect(Collectors.toList());
 
-        return PlantListDtoBuilder.create(list, filter.getPage(), filter.getSize());
+
+        return PageUtil.create(list, pageable.getPageNumber(), pageable.getPageSize());
     }
 
-    @PostMapping("/update")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity updatePlant(@RequestBody PlantDto plantDto) {
+    @Override
+    public ResponseEntity createPlant(PlantDto plantDto) {
+        log.info("IN createPlant - created new instance");
+        PlantEntity entity = plantService.create(plantDto);
+        return ResponseEntity.ok(entity.getId());
+    }
+
+    @Override
+    public ResponseEntity updatePlant(PlantDto plantDto) {
         log.info("IN updatePlant - trying to update plant id {}", plantDto.getId());
-        PlantEntity plant = plantMapper.mapDtoToEntity(plantDto);
-        plantService.update(plant);
+        plantService.update(plantDto);
+        return ResponseEntity.ok(plantDto.getId());
+
+    }
+
+    @Override
+    public ResponseEntity deletePlant(long id) {
+        log.info("IN deletePlant - trying to delete plant id {}", id);
+        plantService.delete(id);
+
         return ResponseEntity.ok(null);
     }
 }

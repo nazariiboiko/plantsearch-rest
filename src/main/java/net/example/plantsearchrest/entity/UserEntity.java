@@ -1,7 +1,6 @@
 package net.example.plantsearchrest.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Data;
 import lombok.ToString;
 

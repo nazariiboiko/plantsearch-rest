@@ -13,6 +13,9 @@ public interface UserService {
     List<UserEntity> getAll(Pageable pageable);
     UserEntity findByLogin(String username);
     UserEntity findById(Long id);
+
+    void create();
+
     void delete(Long id);
     void update(UserEntity entity);
     void setStatus(Long id, Status status);

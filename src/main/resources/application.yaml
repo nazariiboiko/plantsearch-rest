@@ -2,22 +2,35 @@ server:
   port: 8085
 
 spring:
+  config:
+    location: classpath:/secrets.properties
   datasource:
     url: jdbc:postgresql://localhost:5432/plants
     username: postgres
-    password: root
   liquibase:
     change-log: classpath:liquibase/db.changelog-master.xml
     url: jdbc:postgresql://localhost:5432/plants
     user: postgres
-    password: root
+  cloud:
+    aws:
+      region:
+        static: eu-north-1
+
+s3:
+  pictures:
+    bucket: plantsearch
+    type:
+      image: images/
+      sketch: sketches/
 
 jwt:
   password:
     encoder:
-      secret: FZK2DZ82odqS13e8aENggaMbb_fAkl-nJL4AEVBX43g
       iteration: 64
       keyLength: 256
   token:
-    secret: b5f59337a612a2a7dc07328f3e7d1a04722967c7f06df20a499a7d3f91ff2a7e
-    expired: 3600000
+    expired: 36000000
+
+springdoc:
+  api-docs:
+    path: /swagger

@@ -11,9 +11,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class PlantListDto {
-    private List<PlantDto> data;
-    private int pageSize;
-    private int pageNumber;
-    private int totalSize;
+public class PageDto <T> {
+    List<T> data;
+    int pageNumber;
+    int pageSize;
+    int totalSize;
 }

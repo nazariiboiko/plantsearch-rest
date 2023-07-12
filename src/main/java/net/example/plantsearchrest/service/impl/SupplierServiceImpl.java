@@ -5,8 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.example.plantsearchrest.entity.SupplierEntity;
 import net.example.plantsearchrest.repository.SupplierRepository;
 import net.example.plantsearchrest.service.SupplierService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,11 +18,13 @@ public class SupplierServiceImpl implements SupplierService {
 
     @Override
     public List<SupplierEntity> getAll() {
+        log.info("IN getAll - return all suppliers");
         return supplierRepo.findAll();
     }
 
     @Override
-    public Page<SupplierEntity> getAll(Pageable pageable) {
-        return supplierRepo.findAll(pageable);
+    public SupplierEntity getById(long id) {
+        log.info("IN getById - return supplier id {}", id);
+        return supplierRepo.getById(id);
     }
 }

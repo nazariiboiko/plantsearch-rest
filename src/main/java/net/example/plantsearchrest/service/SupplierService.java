@@ -9,5 +9,5 @@ import java.util.List;
 public interface SupplierService {
     List<SupplierEntity> getAll();
 
-    Page<SupplierEntity> getAll(Pageable pageable);
+    SupplierEntity getById(long id);
 }

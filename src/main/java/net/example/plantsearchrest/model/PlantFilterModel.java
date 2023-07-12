@@ -8,9 +8,8 @@ public class PlantFilterModel {
     @JsonProperty("params")
     private PlantFilterDataModel data;
 
-    @JsonProperty("page")
-    private int page;
-
-    @JsonProperty("size")
-    private int size;
+    @Override
+    public String toString() {
+        return data.toString();
+    }
 }
