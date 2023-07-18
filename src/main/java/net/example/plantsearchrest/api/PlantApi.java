@@ -5,14 +5,15 @@ import io.swagger.annotations.*;
 import net.example.plantsearchrest.dto.PageDto;
 import net.example.plantsearchrest.dto.PlantDto;
 import net.example.plantsearchrest.model.PlantFilterModel;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.io.IOException;
 import java.util.List;
 
 @Api(tags = "Plant management api")
@@ -77,7 +78,11 @@ public interface PlantApi {
     @PreAuthorize("hasAuthority('ADMIN')")
     ResponseEntity<Long> createPlant(
             @ApiParam(value = "Plant DTO")
-            @RequestBody PlantDto plantDto);
+            @RequestPart("plantDto") PlantDto plantDto,
+            @ApiParam(value = "Image of plant")
+            @RequestPart(name = "image", required = false) MultipartFile image,
+            @ApiParam(value = "Sketch of plant")
+            @RequestPart(name = "sketch", required = false) MultipartFile sketch) throws IOException;
 
     @ApiOperation("Update a plant")
     @ApiResponses({
@@ -89,7 +94,11 @@ public interface PlantApi {
     @PreAuthorize("hasAuthority('ADMIN')")
     ResponseEntity updatePlant(
             @ApiParam(value = "Plant DTO")
-            @RequestBody PlantDto plantDto);
+            @RequestPart PlantDto plantDto,
+            @ApiParam(value = "Image of plant")
+            @RequestPart(name = "image", required = false) MultipartFile image,
+            @ApiParam(value = "Sketch of plant")
+            @RequestPart(name = "sketch", required = false) MultipartFile sketch) throws IOException;
 
     @ApiOperation("Delete a plant")
     @ApiResponses({

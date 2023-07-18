@@ -10,12 +10,12 @@ import net.example.plantsearchrest.mapper.PlantMapper;
 import net.example.plantsearchrest.model.PlantFilterModel;
 import net.example.plantsearchrest.service.PlantService;
 import net.example.plantsearchrest.utils.PageUtil;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -67,7 +67,7 @@ public class PlantController implements PlantApi {
     @Override
     public PageDto<PlantDto> filterPlants(PlantFilterModel filter, Pageable pageable) {
 
-        log.info("IN filterPlants - received filter criterias {}" + filter.toString());
+        log.info("IN filterPlants - received filter criterias {}", filter.toString());
 
         List<PlantDto> list = plantService.getAllByCriterias(filter).stream()
                 .map(plantMapper::mapEntityToDto)
@@ -78,16 +78,16 @@ public class PlantController implements PlantApi {
     }
 
     @Override
-    public ResponseEntity createPlant(PlantDto plantDto) {
+    public ResponseEntity createPlant(PlantDto plantDto, MultipartFile image, MultipartFile sketch) throws IOException {
         log.info("IN createPlant - created new instance");
-        PlantEntity entity = plantService.create(plantDto);
+        PlantEntity entity = plantService.create(plantDto, image, sketch);
         return ResponseEntity.ok(entity.getId());
     }
 
     @Override
-    public ResponseEntity updatePlant(PlantDto plantDto) {
+    public ResponseEntity<Long> updatePlant(PlantDto plantDto, MultipartFile image, MultipartFile sketch) throws IOException {
         log.info("IN updatePlant - trying to update plant id {}", plantDto.getId());
-        plantService.update(plantDto);
+        plantService.update(plantDto, image, sketch);
         return ResponseEntity.ok(plantDto.getId());
 
     }

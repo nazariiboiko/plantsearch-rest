@@ -12,8 +12,8 @@ import java.util.List;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class PageDto <T> {
-    List<T> data;
-    int pageNumber;
-    int pageSize;
-    int totalSize;
+    private List<T> data;
+    private int pageNumber;
+    private int pageSize;
+    private int totalSize;
 }

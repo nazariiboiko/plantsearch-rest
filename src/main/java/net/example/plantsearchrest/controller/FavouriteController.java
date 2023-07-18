@@ -47,9 +47,6 @@ public class FavouriteController implements FavouritesApi {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         JwtUser user = (JwtUser) authentication.getPrincipal();
         favouriteService.changeLikeStatement(plantId, user.getId());
-
-        log.info("IN changeLikeStatement - user {} has marked plant {}", user.getLogin(), plantId);
-
         return ResponseEntity.ok(null);
     }
 }

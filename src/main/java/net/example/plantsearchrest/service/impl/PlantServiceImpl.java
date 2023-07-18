@@ -3,19 +3,25 @@ package net.example.plantsearchrest.service.impl;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import liquibase.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.example.plantsearchrest.dto.PlantDto;
 import net.example.plantsearchrest.entity.PlantEntity;
 import net.example.plantsearchrest.mapper.PlantMapper;
 import net.example.plantsearchrest.model.PlantFilterModel;
+import net.example.plantsearchrest.model.FolderName;
 import net.example.plantsearchrest.repository.PlantRepository;
+import net.example.plantsearchrest.repository.S3Repository;
 import net.example.plantsearchrest.service.PlantService;
 import net.example.plantsearchrest.utils.PlantEntityCriteriaBuilder;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
-import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -25,12 +31,15 @@ import java.util.stream.IntStream;
 @Service
 @RequiredArgsConstructor
 public class PlantServiceImpl implements PlantService {
+    private final Random random = new Random();
+    private final String bucketName = "plantsearch/";
 
     private final PlantRepository plantRep;
-    private final Random random = new Random();
+    private final S3Repository s3Rep;
     private final PlantMapper plantMapper = PlantMapper.INSTANCE;
     @PersistenceContext
     private EntityManager entityManager;
+
 
     @Override
     public List<PlantEntity> getAll() {
@@ -70,7 +79,7 @@ public class PlantServiceImpl implements PlantService {
         } else {
             log.error("IN findByMatchingName| not recognized symbol {}", name);
         }
-        return new ArrayList<PlantEntity>();
+        return new ArrayList<>();
     }
 
     private List<PlantEntity> findByUaName(String name) {
@@ -94,33 +103,87 @@ public class PlantServiceImpl implements PlantService {
 
     @Override
     @Transactional
-    public PlantEntity create(PlantDto plant) {
+    public PlantEntity create(PlantDto plant, MultipartFile image, MultipartFile sketch) throws IOException {
         PlantEntity entity = new PlantEntity();
         entity.setId(-1L);
         plantMapper.updatePlantEntity(plant, entity);
         PlantEntity instance = plantRep.save(entity);
+
+        if(image != null) {
+            saveImageIntoS3(image, FolderName.IMAGE);
+        }
+        if(sketch != null) {
+            saveImageIntoS3(sketch, FolderName.SKETCH);
+        }
+
         log.info("IN create - created id:{}", instance.getId());
         return instance;
     }
 
     @Override
     @Transactional
-    public void update(PlantDto entity) {
+    public void update(PlantDto entity, MultipartFile image, MultipartFile sketch) throws IOException {
         if(entity.getId() == null) {
-            create(entity);
+            create(entity, null, null);
         }
-        log.info("IN update - starting update plant id:{}", entity.getId());
         PlantEntity plant = plantRep.findById(entity.getId()).orElseThrow(null);
         if(plant != null) {
             log.info("IN update - previous values: {}", plant);
             log.info("IN update - current values: {}", entity);
             PlantMapper.INSTANCE.updatePlantEntity(entity, plant);
+
+            if(image != null && image.getOriginalFilename().equals(entity.getImage())) {
+                deleteImageFromS3(entity.getImage(), FolderName.IMAGE);
+                saveImageIntoS3(image, FolderName.IMAGE);
+            }
+            if(sketch != null && sketch.getOriginalFilename().equals(entity.getSketch())) {
+                deleteImageFromS3(entity.getSketch(), FolderName.SKETCH);
+                saveImageIntoS3(sketch, FolderName.SKETCH);
+            }
+        } else {
+            log.info("IN update - id {} not found", entity.getId());
         }
     }
 
     @Override
     public void delete(long id) {
-        plantRep.deleteById(id);
-        log.info("IN delete - plant id {} has been deleted successfully", id);
+        PlantEntity entity = plantRep.getById(id);
+        try {
+            if(StringUtil.isNotEmpty(entity.getImage())) {
+                s3Rep.deleteImage(bucketName + FolderName.IMAGE.getValue(), entity.getImage());
+                log.info("IN delete - image {} has been deleted", entity.getImage());
+            }
+
+            if(StringUtil.isNotEmpty(entity.getSketch())) {
+                s3Rep.deleteImage(bucketName + FolderName.SKETCH.getValue(), entity.getSketch());
+                log.info("IN delete - sketch {} has been deleted", entity.getSketch());
+            }
+
+            plantRep.deleteById(id);
+            log.info("IN delete - plant id {} has been deleted successfully", id);
+        } catch (AmazonServiceException e) {
+            throw new IllegalStateException("Failed to upload the images", e);
+        }
+    }
+
+    private void saveImageIntoS3(MultipartFile image, FolderName folderName) {
+        try {
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(image.getSize());
+            metadata.setContentType(image.getContentType());
+            s3Rep.uploadImage(bucketName + folderName.getValue(), image.getOriginalFilename(), image.getInputStream(), metadata);
+            log.info("IN saveImageIntoS3 - image {} was successfully saved into folder {} in bucket {}", image.getOriginalFilename(), folderName, bucketName);
+        } catch (IOException exp) {
+            throw new IllegalStateException("Failed to read the image", exp);
+        }
+    }
+
+    private void deleteImageFromS3(String imageName, FolderName folderName) {
+        try {
+            s3Rep.deleteImage(bucketName + folderName.getValue(), imageName);
+            log.info("IN deleteImageFromS3 - image {} has been deleted from folder {} in bucket {}", imageName, folderName, bucketName);
+        } catch (AmazonServiceException e) {
+            throw new AmazonServiceException("Failed to delete the image", e);
+        }
     }
 }
