@@ -2,7 +2,7 @@ package net.example.plantsearchrest.api;
 
 import io.swagger.annotations.*;
 
-import net.example.plantsearchrest.dto.PageDto;
+import net.example.plantsearchrest.model.SinglePage;
 import net.example.plantsearchrest.dto.PlantDto;
 import net.example.plantsearchrest.model.PlantFilterModel;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +24,7 @@ public interface PlantApi {
     @ApiResponse(code = 200, message = "OK")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    PageDto<PlantDto> getPlantList(@ApiIgnore("Ignored because swagger ui shows the wrong params")
+    SinglePage<PlantDto> getPlantList(@ApiIgnore("Ignored because swagger ui shows the wrong params")
                                 Pageable pageable);
 
     @ApiOperation("Get plant by id")
@@ -52,7 +52,7 @@ public interface PlantApi {
     })
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/search")
-    PageDto<PlantDto> searchPlantsByName(
+    SinglePage<PlantDto> searchPlantsByName(
             @ApiParam(value = "keyword string")
             @RequestParam String keyword,
             @ApiIgnore("Ignored because swagger ui shows the wrong params")
@@ -62,7 +62,7 @@ public interface PlantApi {
     @ApiResponse(code = 200, message = "OK")
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/filter")
-    PageDto<PlantDto> filterPlants(
+    SinglePage<PlantDto> filterPlants(
             @ApiParam(value = "Plant filter model")
             @RequestBody PlantFilterModel filter,
             @ApiIgnore("Ignored because swagger ui shows the wrong params")

@@ -75,7 +75,7 @@ public class JwtTokenProvider {
         Claims claims = getClaimsFromToken(token);
 
         if (claims.getExpiration().before(new Date())) {
-            throw new RuntimeException("Token expired");
+            throw new RuntimeException("TOKEN_EXPIRED");
         } else return true;
     }
 
@@ -90,13 +90,13 @@ public class JwtTokenProvider {
         UserEntity userEntity = userService.findByLogin(username);
 
         if(userEntity == null) {
-            throw new JwtAuthenticationException("User not found");
+            throw new JwtAuthenticationException("Invalid username or password", "INVALID_CREDENTIALS");
         }
 
         if(userEntity.getStatus().equals(Status.ACTIVE)) {
             if(passwordEncoder.matches(password, userEntity.getPassword())) {
                 return createToken(username, userEntity.getRole());
-            } else throw new JwtAuthenticationException("Invalid password");
-        } else throw new JwtAuthenticationException("User is blocked");
+            } else throw new JwtAuthenticationException("Invalid username or password", "INVALID_CREDENTIALS");
+        } else throw new JwtAuthenticationException("User is blocked", "USER_BLOCKED");
     }
 }

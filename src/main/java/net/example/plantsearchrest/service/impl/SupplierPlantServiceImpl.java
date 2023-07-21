@@ -7,14 +7,17 @@ import net.example.plantsearchrest.repository.SupplierPlantRepository;
 import net.example.plantsearchrest.service.SupplierPlantService;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class SupplierPlantServiceImpl implements SupplierPlantService {
 
-    SupplierPlantRepository supPlantRep;
+    private final SupplierPlantRepository supPlantRep;
 
     @Override
+    @Transactional
     public void create(Long plantId, Long supplierId) {
         SupplierPlantEntity entity = new SupplierPlantEntity();
         entity.setPlantId(plantId);
@@ -23,6 +26,7 @@ public class SupplierPlantServiceImpl implements SupplierPlantService {
     }
 
     @Override
+    @Transactional
     public void delete(Long plantId, Long supplierId) {
         supPlantRep.deleteByPlantIdAndSupplierId(plantId, supplierId);
     }

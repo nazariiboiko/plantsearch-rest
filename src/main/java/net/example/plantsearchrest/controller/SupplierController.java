@@ -3,7 +3,7 @@ package net.example.plantsearchrest.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.example.plantsearchrest.api.SupplierApi;
-import net.example.plantsearchrest.dto.PageDto;
+import net.example.plantsearchrest.model.SinglePage;
 import net.example.plantsearchrest.dto.SupplierDto;
 import net.example.plantsearchrest.mapper.SupplierMapper;
 import net.example.plantsearchrest.service.SupplierPlantService;
@@ -26,7 +26,7 @@ public class SupplierController implements SupplierApi {
     private final SupplierMapper supplierMapper = SupplierMapper.INSTANCE;
 
     @Override
-    public PageDto<SupplierDto> getSupplierList(Pageable pageable) {
+    public SinglePage<SupplierDto> getSupplierList(Pageable pageable) {
         log.info("IN getAllSuppliers | return page {} in total {} objects", pageable.getPageNumber(), pageable.getPageSize());
 
         List<SupplierDto> list = supplierService.getAll().stream()

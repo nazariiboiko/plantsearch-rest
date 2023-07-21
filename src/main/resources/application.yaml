@@ -15,6 +15,11 @@ spring:
     aws:
       region:
         static: eu-north-1
+  servlet:
+    multipart:
+      max-file-size: 10MB
+  messages:
+    encoding: UTF-8
 
 s3:
   pictures:

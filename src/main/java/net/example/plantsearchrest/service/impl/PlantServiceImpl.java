@@ -1,9 +1,5 @@
 package net.example.plantsearchrest.service.impl;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
-
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import liquibase.util.StringUtil;
@@ -12,8 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.example.plantsearchrest.dto.PlantDto;
 import net.example.plantsearchrest.entity.PlantEntity;
 import net.example.plantsearchrest.mapper.PlantMapper;
-import net.example.plantsearchrest.model.PlantFilterModel;
 import net.example.plantsearchrest.model.FolderName;
+import net.example.plantsearchrest.model.PlantFilterModel;
 import net.example.plantsearchrest.repository.PlantRepository;
 import net.example.plantsearchrest.repository.S3Repository;
 import net.example.plantsearchrest.service.PlantService;
@@ -21,9 +17,13 @@ import net.example.plantsearchrest.utils.PlantEntityCriteriaBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.IntStream;
 
@@ -57,13 +57,20 @@ public class PlantServiceImpl implements PlantService {
 
     @Override
     public PlantEntity getById(long id) {
-        log.info("IN getById | return object with {} id", id);
-        return plantRep.getById(id);
+        Optional<PlantEntity> entityOptional = plantRep.findById(id);
+        if (entityOptional.isPresent()) {
+            PlantEntity entity = entityOptional.get();
+            log.info("IN getById - return object with {} id", id);
+            return entity;
+        } else {
+            log.info("IN getById -n object with {} id not found", id);
+            return null;
+        }
     }
 
     @Override
     public PlantEntity getByName(String name) {
-        log.info("IN getByName | return {} object", name);
+        log.info("IN getByName - return {} object", name);
         return plantRep.getByName(name);
     }
 
@@ -71,13 +78,13 @@ public class PlantServiceImpl implements PlantService {
     public List<PlantEntity> findByMatchingName(String name) {
 
         if (Character.UnicodeBlock.of(name.charAt(1)) == Character.UnicodeBlock.CYRILLIC) {
-            log.info("IN findByMatchingName| return objects by cyryllic name {}", name);
+            log.info("IN findByMatchingName - return objects by cyryllic name {}", name);
             return findByUaName(name);
         } else if (Character.UnicodeBlock.of(name.charAt(0)) == Character.UnicodeBlock.BASIC_LATIN) {
-            log.info("IN finByMatchingName| return objects by latin name {}", name);
+            log.info("IN finByMatchingName - return objects by latin name {}", name);
             return findByLaName(name);
         } else {
-            log.error("IN findByMatchingName| not recognized symbol {}", name);
+            log.error("IN findByMatchingName - not recognized symbol {}", name);
         }
         return new ArrayList<>();
     }
@@ -92,7 +99,7 @@ public class PlantServiceImpl implements PlantService {
 
     @Override
     public long getTotalRowCount() {
-        log.info("IN getTotalRowCount | return current count");
+        log.info("IN getTotalRowCount - return current count");
         return plantRep.count();
     }
 
@@ -128,18 +135,18 @@ public class PlantServiceImpl implements PlantService {
         }
         PlantEntity plant = plantRep.findById(entity.getId()).orElseThrow(null);
         if(plant != null) {
-            log.info("IN update - previous values: {}", plant);
-            log.info("IN update - current values: {}", entity);
-            PlantMapper.INSTANCE.updatePlantEntity(entity, plant);
 
-            if(image != null && image.getOriginalFilename().equals(entity.getImage())) {
-                deleteImageFromS3(entity.getImage(), FolderName.IMAGE);
+            if(image != null && !StringUtil.equalsIgnoreCaseAndEmpty(image.getOriginalFilename(), plant.getImage())){
+                deleteImageFromS3(plant.getImage(), FolderName.IMAGE);
                 saveImageIntoS3(image, FolderName.IMAGE);
             }
-            if(sketch != null && sketch.getOriginalFilename().equals(entity.getSketch())) {
-                deleteImageFromS3(entity.getSketch(), FolderName.SKETCH);
+            if(sketch != null && !StringUtil.equalsIgnoreCaseAndEmpty(sketch.getOriginalFilename(), plant.getSketch())) {
+                deleteImageFromS3(plant.getSketch(), FolderName.SKETCH);
                 saveImageIntoS3(sketch, FolderName.SKETCH);
             }
+
+            log.info("IN update - previous values: {}, current values: {}", plant, entity);
+            PlantMapper.INSTANCE.updatePlantEntity(entity, plant);
         } else {
             log.info("IN update - id {} not found", entity.getId());
         }
@@ -151,18 +158,16 @@ public class PlantServiceImpl implements PlantService {
         try {
             if(StringUtil.isNotEmpty(entity.getImage())) {
                 s3Rep.deleteImage(bucketName + FolderName.IMAGE.getValue(), entity.getImage());
-                log.info("IN delete - image {} has been deleted", entity.getImage());
             }
 
             if(StringUtil.isNotEmpty(entity.getSketch())) {
                 s3Rep.deleteImage(bucketName + FolderName.SKETCH.getValue(), entity.getSketch());
-                log.info("IN delete - sketch {} has been deleted", entity.getSketch());
             }
 
             plantRep.deleteById(id);
             log.info("IN delete - plant id {} has been deleted successfully", id);
         } catch (AmazonServiceException e) {
-            throw new IllegalStateException("Failed to upload the images", e);
+            throw new IllegalStateException("Failed to delete the image", e);
         }
     }
 
@@ -178,7 +183,7 @@ public class PlantServiceImpl implements PlantService {
         }
     }
 
-    private void deleteImageFromS3(String imageName, FolderName folderName) {
+    private void deleteImageFromS3(String imageName, FolderName folderName) throws AmazonServiceException {
         try {
             s3Rep.deleteImage(bucketName + folderName.getValue(), imageName);
             log.info("IN deleteImageFromS3 - image {} has been deleted from folder {} in bucket {}", imageName, folderName, bucketName);

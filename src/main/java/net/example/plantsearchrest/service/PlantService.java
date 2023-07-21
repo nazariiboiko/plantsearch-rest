@@ -12,6 +12,7 @@ import java.util.List;
 public interface PlantService {
     List<PlantEntity> getAll();
 
+
     List<PlantEntity> getRandom(int amount);
     PlantEntity getById(long id);
     PlantEntity getByName(String name);

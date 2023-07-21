@@ -3,7 +3,7 @@ package net.example.plantsearchrest.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.example.plantsearchrest.api.PlantApi;
-import net.example.plantsearchrest.dto.PageDto;
+import net.example.plantsearchrest.model.SinglePage;
 import net.example.plantsearchrest.dto.PlantDto;
 import net.example.plantsearchrest.entity.PlantEntity;
 import net.example.plantsearchrest.mapper.PlantMapper;
@@ -28,12 +28,12 @@ public class PlantController implements PlantApi {
     private final PlantMapper plantMapper = PlantMapper.INSTANCE;
 
     @Override
-    public PageDto<PlantDto> getPlantList(Pageable pageable) {
-        log.info("IN getPlantList | return page {} with size {} objects", pageable.getPageNumber(), pageable.getPageSize());
-
+    public SinglePage<PlantDto> getPlantList(Pageable pageable) {
         List<PlantDto> list = plantService.getAll().stream()
-                .map(plantMapper::mapEntityToDto)
-                .collect(Collectors.toList());
+                                .map(plantMapper::mapEntityToDto)
+                                .collect(Collectors.toList());
+
+        log.info("IN getPlantList | return page {} with size {} objects", pageable.getPageNumber(), pageable.getPageSize());
         return PageUtil.create(list, pageable.getPageNumber(), pageable.getPageSize());
     }
 
@@ -55,7 +55,7 @@ public class PlantController implements PlantApi {
     }
 
     @Override
-    public PageDto<PlantDto> searchPlantsByName(String keyword, Pageable pageable) {
+    public SinglePage<PlantDto> searchPlantsByName(String keyword, Pageable pageable) {
         List<PlantDto> list = plantService.findByMatchingName(keyword).stream()
                 .map(plantMapper::mapEntityToDto)
                 .collect(Collectors.toList());
@@ -65,7 +65,7 @@ public class PlantController implements PlantApi {
     }
 
     @Override
-    public PageDto<PlantDto> filterPlants(PlantFilterModel filter, Pageable pageable) {
+    public SinglePage<PlantDto> filterPlants(PlantFilterModel filter, Pageable pageable) {
 
         log.info("IN filterPlants - received filter criterias {}", filter.toString());
 

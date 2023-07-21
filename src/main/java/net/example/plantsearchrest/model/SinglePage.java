@@ -1,4 +1,4 @@
-package net.example.plantsearchrest.dto;
+package net.example.plantsearchrest.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class PageDto <T> {
+public class SinglePage<T> {
     private List<T> data;
     private int pageNumber;
     private int pageSize;

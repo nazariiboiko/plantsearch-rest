@@ -1,11 +1,11 @@
-package net.example.plantsearchrest.dto;
+package net.example.plantsearchrest.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class AuthRequestDto {
+public class AuthRequest {
     private String login;
     private String password;
 }

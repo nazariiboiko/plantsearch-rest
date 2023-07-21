@@ -1,7 +1,7 @@
 package net.example.plantsearchrest.api;
 
 import io.swagger.annotations.*;
-import net.example.plantsearchrest.dto.PageDto;
+import net.example.plantsearchrest.model.SinglePage;
 import net.example.plantsearchrest.dto.SupplierDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -18,7 +18,7 @@ public interface SupplierApi {
     @ApiResponse(code = 200, message = "OK")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    PageDto<SupplierDto> getSupplierList(
+    SinglePage<SupplierDto> getSupplierList(
             @ApiIgnore("Ignored because swagger ui shows the wrong params")
             Pageable pageable);
 
@@ -54,9 +54,9 @@ public interface SupplierApi {
     @PreAuthorize("hasAuthority('ADMIN')")
     ResponseEntity<?> addJunction(
             @ApiParam(value = "Supplier ID")
-            @PathVariable Long supplierId,
+            @RequestParam Long supplierId,
             @ApiParam(value = "Plant ID")
-            @PathVariable Long plantId);
+            @RequestParam Long plantId);
 
     @ApiOperation("Delete a plant for supplier")
     @ApiResponses({
@@ -67,7 +67,7 @@ public interface SupplierApi {
     @PreAuthorize("hasAuthority('ADMIN')")
     ResponseEntity<?> deleteJunction(
             @ApiParam(value = "Supplier ID")
-            @PathVariable Long supplierId,
+            @RequestParam Long supplierId,
             @ApiParam(value = "Plant ID")
-            @PathVariable Long plantId);
+            @RequestParam Long plantId);
 }

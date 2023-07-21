@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class PlantDto {
+public class PlantDto implements Comparable<PlantDto>{
     private Long id;
     private String name;
     private String latinName;
@@ -33,4 +33,9 @@ public class PlantDto {
     private String soilMoisture;
     private String hardy;
     private String nutrition;
+
+    @Override
+    public int compareTo(PlantDto other) {
+        return this.getId().compareTo(other.getId());
+    }
 }

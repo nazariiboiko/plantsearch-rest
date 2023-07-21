@@ -12,8 +12,13 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class SupplierDto {
+public class SupplierDto implements Comparable<SupplierDto>{
     private Long id;
     private String name;
     private List<PlantEntity> avaliablePlants;
+
+    @Override
+    public int compareTo(SupplierDto other) {
+        return this.getId().compareTo(other.getId());
+    }
 }

@@ -7,15 +7,24 @@ import lombok.NoArgsConstructor;
 import net.example.plantsearchrest.entity.Role;
 import net.example.plantsearchrest.entity.Status;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class UserDto {
+public class UserDto implements Comparable<UserDto> {
     private Long id;
     private String email;
     private String login;
     private String password;
     private Role role;
     private Status status;
+    private LocalDateTime createdAt;
+    private LocalDateTime visitedAt;
+
+    @Override
+    public int compareTo(UserDto other) {
+        return this.getId().compareTo(other.getId());
+    }
 }

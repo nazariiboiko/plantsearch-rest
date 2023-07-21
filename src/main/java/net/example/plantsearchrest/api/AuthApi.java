@@ -1,12 +1,13 @@
 package net.example.plantsearchrest.api;
 
 import io.swagger.annotations.*;
-import net.example.plantsearchrest.dto.AuthRequestDto;
+import net.example.plantsearchrest.model.AuthRequest;
 import net.example.plantsearchrest.dto.UserDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Api(tags = "Auth management api")
 @RequestMapping("/api/v1/auth")
@@ -18,7 +19,9 @@ public interface AuthApi {
     })
     @PostMapping("/login")
     ResponseEntity login(@ApiParam(value = "AuthRequest DTO")
-                         @RequestBody AuthRequestDto requestDto);
+                         @RequestBody AuthRequest requestDto,
+                         @ApiParam(value = "language")
+                         @RequestParam(defaultValue = "en") String language);
 
     @ApiOperation("Sign up")
     @ApiResponses({
@@ -27,6 +30,7 @@ public interface AuthApi {
     })
     @PostMapping("/register")
     ResponseEntity register(@ApiParam(value = "User DTO")
-                            @RequestBody UserDto userDto);
-
+                            @RequestBody UserDto userDto,
+                            @ApiParam(value = "language")
+                            @RequestParam(defaultValue = "en") String language);
 }

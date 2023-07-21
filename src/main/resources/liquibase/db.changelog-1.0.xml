@@ -27,7 +27,7 @@
             </column>
 
             <column type="VARCHAR(25)" name="role" defaultValue="USER">
-            <constraints nullable="false"/>
+                <constraints nullable="false"/>
             </column>
         </createTable>
     </changeSet>

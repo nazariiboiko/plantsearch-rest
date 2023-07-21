@@ -1,18 +1,19 @@
 package net.example.plantsearchrest.utils;
 
-import net.example.plantsearchrest.dto.PageDto;
-import net.example.plantsearchrest.dto.PlantDto;
+import net.example.plantsearchrest.model.SinglePage;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PageUtil {
 
-    static public PageDto create(List data, int pageNumber, int pageSize) {
-        return new PageDto().toBuilder()
+    static public SinglePage create(List data, int pageNumber, int pageSize) {
+        List sortedData = (List) data.stream().sorted().collect(Collectors.toList());
+        return new SinglePage().toBuilder()
                 .pageSize(pageSize)
                 .totalSize(data.size())
                 .pageNumber(pageNumber)
-                .data(makeSinglePageFromList(data, pageNumber, pageSize))
+                .data(makeSinglePageFromList(sortedData, pageNumber, pageSize))
                 .build();
     }
 

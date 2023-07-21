@@ -1,11 +1,11 @@
 package net.example.plantsearchrest.service.impl;
 
-import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.example.plantsearchrest.entity.Role;
 import net.example.plantsearchrest.entity.Status;
 import net.example.plantsearchrest.entity.UserEntity;
+import net.example.plantsearchrest.exception.JwtAuthenticationException;
 import net.example.plantsearchrest.exception.RegistryException;
 import net.example.plantsearchrest.mapper.UserMapper;
 import net.example.plantsearchrest.repository.UserRepository;
@@ -13,8 +13,11 @@ import net.example.plantsearchrest.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.awt.print.Pageable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -25,15 +28,30 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
+    public Map<Object, Object> login(String username, String token) throws JwtAuthenticationException {
+        Map<Object, Object> response = new HashMap<>() {{
+            put("username", username);
+            put("token", token);
+        }};
+
+        return response;
+    }
+
+    @Override
     public UserEntity register(UserEntity userEntity) {
         if(userRepository.findByLogin(userEntity.getLogin()) != null)
-            throw new RegistryException("User already exists");
+            throw new RegistryException("User already exists","USER_ALREADY_EXISTS");
         userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
         userEntity.setRole(Role.USER);
         userEntity.setStatus(Status.ACTIVE);
         UserEntity registeredUserEntity = userRepository.save(userEntity);
         log.info("IN register - user: {} successfully registered", registeredUserEntity);
         return registeredUserEntity;
+    }
+
+    private boolean validateUser(UserEntity user) {
+
+        return false;
     }
 
     @Override
@@ -64,7 +82,7 @@ public class UserServiceImpl implements UserService {
             return null;
         }
 
-        log.info("IN findById - user found by id: {}", id, userEntity);
+        log.info("IN findById - user found by id: {}", id);
         return userEntity;
     }
 
