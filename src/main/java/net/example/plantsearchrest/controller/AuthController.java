@@ -31,9 +31,8 @@ public class AuthController implements AuthApi {
     @Override
     public ResponseEntity<?> login(AuthRequest request, String lang) {
         try {
-            String username = request.getLogin();
-            String token = jwtTokenProvider.authenticate(username, request.getPassword());
-            Map<Object, Object> jwtToken = userService.login(username, token);
+            String token = jwtTokenProvider.authenticate(request.getLogin(), request.getPassword());
+            Map<Object, Object> jwtToken = userService.login(request.getLogin(), token);
             log.info("IN login - user {} has logged in", jwtToken.get("username"));
             return ResponseEntity.ok(jwtToken);
         }
@@ -49,6 +48,18 @@ public class AuthController implements AuthApi {
             UserEntity user = userMapper.mapDtoToEntity(userDto);
             userService.register(user);
             log.info("IN register - user {} has been created", userDto.getLogin());
+            return ResponseEntity.accepted().body(messages.getMessage("CONFIRM_EMAIL", new Locale(lang)));
+        } catch (RegistryException e) {
+            String message = messages.getMessage(e.getMessageCode(), new Locale(lang));
+            return ResponseEntity.badRequest().body(message);
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> activate(UserDto userDto, String code, String lang) {
+        try {
+            userService.activate(userDto, code);
+            log.info("IN register - user {} has been activated", userDto.getLogin());
             return login(new AuthRequest(userDto.getLogin(), userDto.getPassword()), lang);
         } catch (RegistryException e) {
             String message = messages.getMessage(e.getMessageCode(), new Locale(lang));

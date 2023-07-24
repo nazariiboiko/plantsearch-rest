@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -30,6 +32,15 @@ public class UserEntity extends BaseEntity{
     @ToString.Exclude
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Favourite> favourites;
+
+    @Column(name = "activate_code")
+    private String activateCode;
+
+    @Column(name = "last_login")
+    private LocalDateTime lastLogin;
+
+    @Column(name = "registration_date")
+    private LocalDate registrationDate;
 
     @ToString.Include(name = "password")
     private String maskPassword() {

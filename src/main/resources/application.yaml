@@ -20,6 +20,13 @@ spring:
       max-file-size: 10MB
   messages:
     encoding: UTF-8
+  profiles:
+    active: production
+  mail:
+    host: smtp.gmail.com
+    port: 465
+    protocol: smtps
+  debug: true
 
 s3:
   pictures:
@@ -39,3 +46,10 @@ jwt:
 springdoc:
   api-docs:
     path: /swagger
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+        exclude: "trace"

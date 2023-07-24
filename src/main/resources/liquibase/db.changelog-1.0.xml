@@ -90,6 +90,11 @@
         <addColumn tableName="users">
             <column name="last_login" type="timestamp"/>
         </addColumn>
-    </changeSet>
 
+    </changeSet>
+    <changeSet id="1.0.4" author="nazarii.boiko" labels="user-activation-code">
+        <addColumn tableName="users">
+            <column name="activate_code" type="VARCHAR(6)"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

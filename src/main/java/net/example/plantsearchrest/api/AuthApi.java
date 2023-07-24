@@ -33,4 +33,17 @@ public interface AuthApi {
                             @RequestBody UserDto userDto,
                             @ApiParam(value = "language")
                             @RequestParam(defaultValue = "en") String language);
+
+    @ApiOperation("Activate account")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 400, message = "Bad request")
+    })
+    @PostMapping("/activate")
+    ResponseEntity activate(@ApiParam(value = "User DTO")
+                            @RequestBody UserDto userDto,
+                            @ApiParam(value = "Activation code")
+                            @RequestParam String code,
+                            @ApiParam(value = "language")
+                            @RequestParam(defaultValue = "en") String language);
 }
