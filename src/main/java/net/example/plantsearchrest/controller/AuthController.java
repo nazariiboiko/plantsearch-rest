@@ -12,6 +12,7 @@ import net.example.plantsearchrest.model.AuthRequest;
 import net.example.plantsearchrest.security.jwt.JwtTokenProvider;
 import net.example.plantsearchrest.service.UserService;
 import net.example.plantsearchrest.utils.Messages;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,7 +39,7 @@ public class AuthController implements AuthApi {
         }
         catch (JwtAuthenticationException e) {
             String message = messages.getMessage(e.getMessageCode(), new Locale(lang));
-            return ResponseEntity.badRequest().body(message);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
         }
     }
 
@@ -48,10 +49,11 @@ public class AuthController implements AuthApi {
             UserEntity user = userMapper.mapDtoToEntity(userDto);
             userService.register(user);
             log.info("IN register - user {} has been created", userDto.getLogin());
-            return ResponseEntity.accepted().body(messages.getMessage("CONFIRM_EMAIL", new Locale(lang)));
+            String message = messages.getMessage("CONFIRM_EMAIL", new Locale(lang));
+            return ResponseEntity.accepted().body(message);
         } catch (RegistryException e) {
             String message = messages.getMessage(e.getMessageCode(), new Locale(lang));
-            return ResponseEntity.badRequest().body(message);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
         }
     }
 
@@ -59,11 +61,11 @@ public class AuthController implements AuthApi {
     public ResponseEntity<?> activate(UserDto userDto, String code, String lang) {
         try {
             userService.activate(userDto, code);
-            log.info("IN register - user {} has been activated", userDto.getLogin());
+            log.info("IN activate - user {} has been activated", userDto.getLogin());
             return login(new AuthRequest(userDto.getLogin(), userDto.getPassword()), lang);
         } catch (RegistryException e) {
             String message = messages.getMessage(e.getMessageCode(), new Locale(lang));
-            return ResponseEntity.badRequest().body(message);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
         }
     }
 }

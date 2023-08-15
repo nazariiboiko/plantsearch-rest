@@ -1,0 +1,53 @@
+server:
+  port: 8085
+
+spring:
+  config:
+    location: classpath:/secrets.properties
+  datasource:
+    url: jdbc:postgresql://localhost:5432/plants
+    username: postgres
+  liquibase:
+    change-log: classpath:liquibase/db.changelog-master.xml
+    url: jdbc:postgresql://localhost:5432/plants
+    user: postgres
+  cloud:
+    aws:
+      region:
+        static: eu-north-1
+  servlet:
+    multipart:
+      max-file-size: 10MB
+  messages:
+    encoding: UTF-8
+  mail:
+    host: smtp.gmail.com
+    port: 465
+    protocol: smtps
+  debug: true
+
+s3:
+  pictures:
+    bucket: plantsearch
+    type:
+      image: images/
+      sketch: sketches/
+
+jwt:
+  password:
+    encoder:
+      iteration: 64
+      keyLength: 256
+  token:
+    expired: 36000000
+
+springdoc:
+  api-docs:
+    path: /swagger
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+        exclude: "trace"

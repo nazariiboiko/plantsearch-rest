@@ -25,40 +25,26 @@ import java.util.stream.Collectors;
 public class PlantController implements PlantApi {
 
     private final PlantService plantService;
-    private final PlantMapper plantMapper = PlantMapper.INSTANCE;
 
     @Override
     public SinglePage<PlantDto> getPlantList(Pageable pageable) {
-        List<PlantDto> list = plantService.getAll().stream()
-                                .map(plantMapper::mapEntityToDto)
-                                .collect(Collectors.toList());
-
-        log.info("IN getPlantList | return page {} with size {} objects", pageable.getPageNumber(), pageable.getPageSize());
+        List<PlantDto> list = plantService.getAll();
         return PageUtil.create(list, pageable.getPageNumber(), pageable.getPageSize());
     }
 
     @Override
     public PlantDto getPlantById(long id) {
-        log.info("IN plantByIndex | return object with {} id", id);
-        return plantMapper.mapEntityToDto(plantService.getById(id));
+        return plantService.getById(id);
     }
 
     @Override
     public List<PlantDto> getRandomPlantList(int amount) {
-
-        log.info("IN plantListRandom | return {} objects", amount);
-        if(amount < 1)
-            amount = 1;
-        return plantService.getRandom(amount).stream()
-                .map(plantMapper::mapEntityToDto)
-                .collect(Collectors.toList());
+        return plantService.getRandom(amount);
     }
 
     @Override
     public SinglePage<PlantDto> searchPlantsByName(String keyword, Pageable pageable) {
-        List<PlantDto> list = plantService.findByMatchingName(keyword).stream()
-                .map(plantMapper::mapEntityToDto)
-                .collect(Collectors.toList());
+        List<PlantDto> list = plantService.findByMatchingName(keyword);
 
         log.info("IN searchSimilarByName | return {} objects for {} query", list.size(), keyword);
         return PageUtil.create(list, pageable.getPageNumber(), pageable.getPageSize());
@@ -66,13 +52,9 @@ public class PlantController implements PlantApi {
 
     @Override
     public SinglePage<PlantDto> filterPlants(PlantFilterModel filter, Pageable pageable) {
-
         log.info("IN filterPlants - received filter criterias {}", filter.toString());
 
-        List<PlantDto> list = plantService.getAllByCriterias(filter).stream()
-                .map(plantMapper::mapEntityToDto)
-                .collect(Collectors.toList());
-
+        List<PlantDto> list = plantService.getAllByCriterias(filter);
 
         return PageUtil.create(list, pageable.getPageNumber(), pageable.getPageSize());
     }

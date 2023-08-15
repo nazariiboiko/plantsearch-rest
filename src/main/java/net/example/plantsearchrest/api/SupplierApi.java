@@ -70,4 +70,12 @@ public interface SupplierApi {
             @RequestParam Long supplierId,
             @ApiParam(value = "Plant ID")
             @RequestParam Long plantId);
+
+    @ApiOperation("Find all suppliers that has given plant")
+    @ApiResponse(code = 200, message = "Ok")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/find")
+    ResponseEntity<?> getSupplierByPlant(
+            @ApiParam(value = "Plant ID")
+            @RequestParam Long plantId);
 }

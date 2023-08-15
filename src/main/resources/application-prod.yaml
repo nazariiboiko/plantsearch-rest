@@ -2,17 +2,21 @@ server:
   port: 8085
 
 spring:
-  config:
-    location: classpath:/secrets.properties
   datasource:
-    url: jdbc:postgresql://localhost:5432/plants
-    username: postgres
+    url: jdbc:postgresql://${PROD_DB_HOST}:${PROD_DB_PORT}/${PROD_DB_NAME}
+    username: ${PROD_DB_USERNAME}
+    password: ${PROD_DB_PASSWORD}
+    name:
   liquibase:
     change-log: classpath:liquibase/db.changelog-master.xml
     url: jdbc:postgresql://localhost:5432/plants
-    user: postgres
+    user: ${PROD_DB_USER}
+    password: ${PROD_DB_PASSWORD}
   cloud:
     aws:
+      credentials:
+        secret-key: ${AWS_SECRET_KEY}
+        access-key: ${AWS_ACCESS_KEY}
       region:
         static: eu-north-1
   servlet:
@@ -20,13 +24,13 @@ spring:
       max-file-size: 10MB
   messages:
     encoding: UTF-8
-  profiles:
-    active: production
   mail:
     host: smtp.gmail.com
     port: 465
     protocol: smtps
-  debug: true
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
+  debug: false
 
 s3:
   pictures:
@@ -38,10 +42,12 @@ s3:
 jwt:
   password:
     encoder:
-      iteration: 64
-      keyLength: 256
+      iteration: ${ENCODER_ITERATION}
+      keyLength: ${ENCODER_KEY_LENGTH}
+      secret: ${ENCODER_SECRET}
   token:
     expired: 36000000
+    secret: ${TOKEN_SECRET}
 
 springdoc:
   api-docs:

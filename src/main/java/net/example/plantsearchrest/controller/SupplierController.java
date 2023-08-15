@@ -28,10 +28,7 @@ public class SupplierController implements SupplierApi {
     @Override
     public SinglePage<SupplierDto> getSupplierList(Pageable pageable) {
         log.info("IN getAllSuppliers | return page {} in total {} objects", pageable.getPageNumber(), pageable.getPageSize());
-
-        List<SupplierDto> list = supplierService.getAll().stream()
-                .map(supplierMapper::mapEntityToDto)
-                .collect(Collectors.toList());
+        List<SupplierDto> list = supplierService.getAll();
 
         return PageUtil.create(list, pageable.getPageNumber(), pageable.getPageSize());
     }
@@ -40,15 +37,15 @@ public class SupplierController implements SupplierApi {
     public SupplierDto getSupplierById(long id) {
         log.info("IN getSupplierById - trying to find id {}", id);
 
-        return supplierMapper.mapEntityToDto(supplierService.getById(id));
+        return supplierService.getById(id);
     }
 
     @Override
     public ResponseEntity<?> createSupplier(SupplierDto supplierDto) {
         log.info("IN createSupplier - created a new supplier with id {}", supplierDto.getId());
 
-        supplierService.createSupplier(supplierDto);
-        return ResponseEntity.ok(null);
+        SupplierDto dto = supplierService.createSupplier(supplierDto);
+        return ResponseEntity.ok().body(dto);
     }
 
     @Override
@@ -65,5 +62,12 @@ public class SupplierController implements SupplierApi {
 
         supPlantService.delete(plantId, supplierId);
         return ResponseEntity.ok(null);
+    }
+
+    @Override
+    public ResponseEntity<?> getSupplierByPlant(Long plantId) {
+        log.info("IN getSupplierByPlant - finding avaliable suppliers for plant id:{}", plantId);
+
+        return ResponseEntity.ok(supPlantService.findByPlant(plantId));
     }
 }

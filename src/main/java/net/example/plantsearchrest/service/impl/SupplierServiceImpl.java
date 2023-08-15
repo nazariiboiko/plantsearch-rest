@@ -10,6 +10,7 @@ import net.example.plantsearchrest.service.SupplierService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -20,25 +21,33 @@ public class SupplierServiceImpl implements SupplierService {
     private final SupplierMapper mapper = SupplierMapper.INSTANCE;
 
     @Override
-    public List<SupplierEntity> getAll() {
+    public List<SupplierDto> getAll() {
         log.info("IN getAll - return all suppliers");
-        return supplierRepo.findAll();
+        List<SupplierEntity> list = supplierRepo.findAll();
+
+        List<SupplierDto> listDto = list.stream()
+                .map(mapper::mapEntityToDto)
+                .collect(Collectors.toList());
+        listDto.forEach(x -> x.setAvaliablePlants(null));
+        return listDto;
     }
 
     @Override
-    public SupplierEntity getById(long id) {
+    public SupplierDto getById(long id) {
         log.info("IN getById - return supplier id {}", id);
-        return supplierRepo.getById(id);
+        SupplierEntity ent = supplierRepo.getById(id);
+        return mapper.mapEntityToDto(ent);
     }
 
     @Override
-    public SupplierEntity createSupplier(SupplierDto dto) {
+    public SupplierDto createSupplier(SupplierDto dto) {
         SupplierEntity entity = new SupplierEntity();
         entity.setId(-1L);
         mapper.updateSupplierEntity(dto, entity);
         SupplierEntity res = supplierRepo.save(entity);
         log.info("IN createSupplier - created new instance id {}", res.getId());
-        return res;
+
+        return mapper.mapEntityToDto(res);
     }
 
     @Override

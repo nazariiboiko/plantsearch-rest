@@ -10,18 +10,17 @@ import java.io.IOException;
 import java.util.List;
 
 public interface PlantService {
-    List<PlantEntity> getAll();
+    List<PlantDto> getAll();
+    PlantDto getById(long id);
+    PlantEntity getEntityById(long id);
+    List<PlantDto> getRandom(int amount);
+    PlantDto getByName(String name);
 
-
-    List<PlantEntity> getRandom(int amount);
-    PlantEntity getById(long id);
-    PlantEntity getByName(String name);
-
-    List<PlantEntity> findByMatchingName(String name);
+    List<PlantDto> findByMatchingName(String name);
 
     long getTotalRowCount();
 
-    List<PlantEntity> getAllByCriterias(PlantFilterModel filter);
+    List<PlantDto> getAllByCriterias(PlantFilterModel filter);
 
     @Transactional
     PlantEntity create(PlantDto plant, MultipartFile image, MultipartFile sketch) throws IOException;

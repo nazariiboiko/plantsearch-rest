@@ -39,27 +39,75 @@ public class PlantEntityCriteriaBuilder {
         }
 
         if (filterDataModel.getHabitus() != null && !filterDataModel.getHabitus().isEmpty()) {
-            predicates.add(root.get("habitus").in(filterDataModel.getHabitus()));
+            List<Predicate> orPredicates = new ArrayList<>();
+            for (String habitus : filterDataModel.getHabitus()) {
+                String f1 = "%" + habitus.toLowerCase() + "%";
+                orPredicates.add(criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("habitus")),
+                        f1
+                ));
+            }
+            predicates.add(criteriaBuilder.or(orPredicates.toArray(new Predicate[0])));
         }
 
         if (filterDataModel.getGrowthRate() != null && !filterDataModel.getGrowthRate().isEmpty()) {
-            predicates.add(root.get("growthRate").in(filterDataModel.getGrowthRate()));
+            List<Predicate> orPredicates = new ArrayList<>();
+            for (String rate : filterDataModel.getGrowthRate()) {
+                String f1 = "%" + rate.toLowerCase() + "%";
+                orPredicates.add(criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("growthRate")),
+                        f1
+                ));
+            }
+            predicates.add(criteriaBuilder.or(orPredicates.toArray(new Predicate[0])));
         }
 
         if (filterDataModel.getColor() != null && !filterDataModel.getColor().isEmpty()) {
-            predicates.add(root.get("color").in(filterDataModel.getColor()));
-        }
-
-        if (filterDataModel.getFrostResistance() != null && !filterDataModel.getFrostResistance().isEmpty()) {
-            predicates.add(root.get("frostResistance").in(filterDataModel.getFrostResistance()));
+            List<Predicate> orPredicates = new ArrayList<>();
+            for (String color : filterDataModel.getColor()) {
+                String f1 = "%" + color.toLowerCase() + "%";
+                orPredicates.add(criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("color")),
+                        f1
+                ));
+            }
+            predicates.add(criteriaBuilder.or(orPredicates.toArray(new Predicate[0])));
         }
 
         if (filterDataModel.getRecommendation() != null && !filterDataModel.getRecommendation().isEmpty()) {
-            predicates.add(root.get("recommendation").in(filterDataModel.getRecommendation()));
+            List<Predicate> orPredicates = new ArrayList<>();
+            for (String recommendation : filterDataModel.getRecommendation()) {
+                String f1 = "%" + recommendation.toLowerCase() + "%";
+                orPredicates.add(criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("recommendation")),
+                        f1
+                ));
+            }
+            predicates.add(criteriaBuilder.or(orPredicates.toArray(new Predicate[0])));
+        }
+
+        if (filterDataModel.getFrostResistance() != null && !filterDataModel.getFrostResistance().isEmpty()) {
+            List<Predicate> orPredicates = new ArrayList<>();
+            for (String resistance : filterDataModel.getFrostResistance()) {
+                String floweringPeriod = "%" + resistance.toLowerCase() + "%";
+                orPredicates.add(criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("frostResistance")),
+                        floweringPeriod
+                ));
+            }
+            predicates.add(criteriaBuilder.or(orPredicates.toArray(new Predicate[0])));
         }
 
         if (filterDataModel.getLighting() != null && !filterDataModel.getLighting().isEmpty()) {
-            predicates.add(root.get("lighting").in(filterDataModel.getLighting()));
+            List<Predicate> orPredicates = new ArrayList<>();
+            for (String light : filterDataModel.getLighting()) {
+                String floweringPeriod = "%" + light.toLowerCase() + "%";
+                orPredicates.add(criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("lighting")),
+                        floweringPeriod
+                ));
+            }
+            predicates.add(criteriaBuilder.or(orPredicates.toArray(new Predicate[0])));
         }
 
         if (filterDataModel.getEvergreen() != null && !filterDataModel.getEvergreen().isEmpty()) {
@@ -67,31 +115,87 @@ public class PlantEntityCriteriaBuilder {
         }
 
         if (filterDataModel.getFloweringPeriod() != null && !filterDataModel.getFloweringPeriod().isEmpty()) {
-            predicates.add(criteriaBuilder.like(root.get("floweringPeriod"), "%" + filterDataModel.getFloweringPeriod() + "%"));
+            List<Predicate> orPredicates = new ArrayList<>();
+            for (String period : filterDataModel.getFloweringPeriod()) {
+                String floweringPeriod = "%" + period.toLowerCase() + "%";
+                orPredicates.add(criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("floweringPeriod")),
+                        floweringPeriod
+                ));
+            }
+            predicates.add(criteriaBuilder.or(orPredicates.toArray(new Predicate[0])));
         }
 
         if (filterDataModel.getPlantType() != null && !filterDataModel.getPlantType().isEmpty()) {
-            predicates.add(root.get("plantType").in(filterDataModel.getPlantType()));
+            List<Predicate> orPredicates = new ArrayList<>();
+            for (String type : filterDataModel.getPlantType()) {
+                String f1 = "%" + type.toLowerCase() + "%";
+                orPredicates.add(criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("plantType")),
+                        f1
+                ));
+            }
+            predicates.add(criteriaBuilder.or(orPredicates.toArray(new Predicate[0])));
         }
-
+        
         if (filterDataModel.getZoning() != null && !filterDataModel.getZoning().isEmpty()) {
-            predicates.add(root.get("zoning").in(filterDataModel.getZoning()));
+            List<Predicate> orPredicates = new ArrayList<>();
+            for (String moisture : filterDataModel.getZoning()) {
+                String zoning = "%" + moisture.toLowerCase() + "%";
+                orPredicates.add(criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("zoning")),
+                        zoning
+                ));
+            }
+            predicates.add(criteriaBuilder.or(orPredicates.toArray(new Predicate[0])));
         }
 
         if (filterDataModel.getPh() != null && !filterDataModel.getPh().isEmpty()) {
-            predicates.add(root.get("ph").in(filterDataModel.getPh()));
+            List<Predicate> orPredicates = new ArrayList<>();
+            for (String moisture : filterDataModel.getPh()) {
+                String ph = "%" + moisture.toLowerCase() + "%";
+                orPredicates.add(criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("ph")),
+                        ph
+                ));
+            }
+            predicates.add(criteriaBuilder.or(orPredicates.toArray(new Predicate[0])));
         }
 
         if (filterDataModel.getSoilMoisture() != null && !filterDataModel.getSoilMoisture().isEmpty()) {
-            predicates.add(root.get("soilMoisture").in(filterDataModel.getSoilMoisture()));
+            List<Predicate> orPredicates = new ArrayList<>();
+            for (String moisture : filterDataModel.getSoilMoisture()) {
+                String floweringPeriod = "%" + moisture.toLowerCase() + "%";
+                orPredicates.add(criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("soilMoisture")),
+                        floweringPeriod
+                ));
+            }
+            predicates.add(criteriaBuilder.or(orPredicates.toArray(new Predicate[0])));
         }
 
         if (filterDataModel.getHardy() != null && !filterDataModel.getHardy().isEmpty()) {
-            predicates.add(root.get("hardy").in(filterDataModel.getHardy()));
+            List<Predicate> orPredicates = new ArrayList<>();
+            for (String nutrition : filterDataModel.getNutrition()) {
+                String hardy = "%" + nutrition.toLowerCase() + "%";
+                orPredicates.add(criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("hardy")),
+                        hardy
+                ));
+            }
+            predicates.add(criteriaBuilder.or(orPredicates.toArray(new Predicate[0])));
         }
 
         if (filterDataModel.getNutrition() != null && !filterDataModel.getNutrition().isEmpty()) {
-            predicates.add(root.get("nutrition").in(filterDataModel.getNutrition()));
+            List<Predicate> orPredicates = new ArrayList<>();
+            for (String nutrition : filterDataModel.getNutrition()) {
+                String floweringPeriod = "%" + nutrition.toLowerCase() + "%";
+                orPredicates.add(criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("nutrition")),
+                        floweringPeriod
+                ));
+            }
+            predicates.add(criteriaBuilder.or(orPredicates.toArray(new Predicate[0])));
         }
 
         if (filterDataModel.getSummerColor() != null && !filterDataModel.getSummerColor().isEmpty()) {
@@ -118,7 +222,7 @@ public class PlantEntityCriteriaBuilder {
             List<Predicate> floweringColor = filterDataModel.getFloweringColor()
                     .stream()
                     .map(color -> color.substring(4))
-                    .map(color -> criteriaBuilder.like(root.get("autumnColor"), "%" + color + "%"))
+                    .map(color -> criteriaBuilder.like(root.get("floweringColor"), "%" + color + "%"))
                     .collect(Collectors.toList());
 
             predicates.add(criteriaBuilder.or(floweringColor.toArray(new Predicate[0])));
@@ -128,7 +232,6 @@ public class PlantEntityCriteriaBuilder {
             criteriaQuery.where(predicates.toArray(new Predicate[0]));
         }
 
-        log.info("IN buildQuery - executing query {} ", criteriaQuery.toString());
         return entityManager.createQuery(criteriaQuery).getResultList();
     }
 }

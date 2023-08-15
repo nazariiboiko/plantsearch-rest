@@ -9,6 +9,7 @@ import net.example.plantsearchrest.mapper.PlantMapper;
 import net.example.plantsearchrest.security.jwt.JwtUser;
 import net.example.plantsearchrest.service.FavouriteService;
 import net.example.plantsearchrest.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -47,6 +48,6 @@ public class FavouriteController implements FavouritesApi {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         JwtUser user = (JwtUser) authentication.getPrincipal();
         favouriteService.changeLikeStatement(plantId, user.getId());
-        return ResponseEntity.ok(null);
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }

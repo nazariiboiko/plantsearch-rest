@@ -7,6 +7,7 @@ import net.example.plantsearchrest.dto.PlantDto;
 import net.example.plantsearchrest.model.PlantFilterModel;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +34,7 @@ public interface PlantApi {
             @ApiResponse(code = 404, message = "Plant not found")
     })
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     PlantDto getPlantById(
             @ApiParam(value = "Plant ID")
             @PathVariable long id);
