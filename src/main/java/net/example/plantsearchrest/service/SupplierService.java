@@ -6,11 +6,11 @@ import net.example.plantsearchrest.entity.SupplierEntity;
 import java.util.List;
 
 public interface SupplierService {
-    List<SupplierEntity> getAll();
+    List<SupplierDto> getAll();
 
-    SupplierEntity getById(long id);
+    SupplierDto getById(long id);
 
-    SupplierEntity createSupplier(SupplierDto dto);
+    SupplierDto createSupplier(SupplierDto dto);
 
     void deleteSupplier(Long id);
 }

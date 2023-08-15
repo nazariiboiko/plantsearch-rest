@@ -1,6 +1,5 @@
 package net.example.plantsearchrest;
 
-import lombok.RequiredArgsConstructor;
 import net.example.plantsearchrest.service.MailSender;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

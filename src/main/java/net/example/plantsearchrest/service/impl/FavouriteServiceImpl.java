@@ -24,7 +24,7 @@ public class FavouriteServiceImpl implements FavouriteService {
     @Override
     public void changeLikeStatement(Long plantId, Long userId) {
         UserEntity user = userService.findById(userId);
-        PlantEntity plant = plantService.getById(plantId);
+        PlantEntity plant = plantService.getEntityById(plantId);
         Favourite fav = favouriteRep.findByUserAndPlant(user, plant);
         if(fav == null) {
             fav = new Favourite();

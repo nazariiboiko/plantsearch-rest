@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Slf4j
@@ -42,40 +43,65 @@ public class PlantServiceImpl implements PlantService {
 
 
     @Override
-    public List<PlantEntity> getAll() {
+    public List<PlantDto> getAll() {
         log.info("IN getAll | return all objects");
-        return plantRep.findAll();
+        return plantRep.findAll().stream()
+                .map(plantMapper::mapEntityToDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<PlantEntity> getRandom(int amount) {
-        log.info("IN getRandom | return {} objects", amount);
+    public List<PlantDto> getRandom(int amount) {
+        if(amount < 1)
+            amount = 1;
+        if(amount > 50)
+            amount = 50;
+
         List<PlantEntity> randomList = new ArrayList<>();
         IntStream.range(0, amount).forEach(x -> randomList.add(plantRep.getById((long) (Math.abs(random.nextInt() % 500) + 1))));
-        return randomList;
+
+        log.info("IN getRandom | return {} objects", amount);
+        return randomList.stream()
+                .map(plantMapper::mapEntityToDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public PlantEntity getById(long id) {
+    public PlantDto getById(long id) {
         Optional<PlantEntity> entityOptional = plantRep.findById(id);
         if (entityOptional.isPresent()) {
             PlantEntity entity = entityOptional.get();
             log.info("IN getById - return object with {} id", id);
-            return entity;
+
+            return plantMapper.mapEntityToDto(entity);
         } else {
-            log.info("IN getById -n object with {} id not found", id);
+            log.info("IN getById - object with {} id not found", id);
             return null;
         }
     }
 
     @Override
-    public PlantEntity getByName(String name) {
-        log.info("IN getByName - return {} object", name);
-        return plantRep.getByName(name);
+    public PlantEntity getEntityById(long id) {
+        Optional<PlantEntity> entityOptional = plantRep.findById(id);
+        if (entityOptional.isPresent()) {
+            PlantEntity entity = entityOptional.get();
+            log.info("IN getEntityById - return object with {} id", id);
+
+            return entity;
+        } else {
+            log.info("IN geEntitytById -n object with {} id not found", id);
+            return null;
+        }
     }
 
     @Override
-    public List<PlantEntity> findByMatchingName(String name) {
+    public PlantDto getByName(String name) {
+        log.info("IN getByName - return {} object", name);
+        return plantMapper.mapEntityToDto(plantRep.getByName(name));
+    }
+
+    @Override
+    public List<PlantDto> findByMatchingName(String name) {
 
         if (Character.UnicodeBlock.of(name.charAt(1)) == Character.UnicodeBlock.CYRILLIC) {
             log.info("IN findByMatchingName - return objects by cyryllic name {}", name);
@@ -89,12 +115,16 @@ public class PlantServiceImpl implements PlantService {
         return new ArrayList<>();
     }
 
-    private List<PlantEntity> findByUaName(String name) {
-        return plantRep.findByNameIsContainingIgnoreCase(name);
+    private List<PlantDto> findByUaName(String name) {
+        return plantRep.findByNameIsContainingIgnoreCase(name).stream()
+                .map(plantMapper::mapEntityToDto)
+                .collect(Collectors.toList());
     }
 
-    private List<PlantEntity> findByLaName(String name) {
-        return plantRep.findByLatinNameIsContainingIgnoreCase(name);
+    private List<PlantDto> findByLaName(String name) {
+        return plantRep.findByLatinNameIsContainingIgnoreCase(name).stream()
+                .map(plantMapper::mapEntityToDto)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -104,8 +134,10 @@ public class PlantServiceImpl implements PlantService {
     }
 
     @Override
-    public List<PlantEntity> getAllByCriterias(PlantFilterModel filter) {
-        return PlantEntityCriteriaBuilder.buildQuery(filter, entityManager);
+    public List<PlantDto> getAllByCriterias(PlantFilterModel filter) {
+        return PlantEntityCriteriaBuilder.buildQuery(filter, entityManager).stream()
+                .map(plantMapper::mapEntityToDto)
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -12,7 +12,7 @@ public class SupplierEntity extends BaseEntity {
     @Column(name = "name")
     private String name;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(
             name = "supplier_plant",
             joinColumns = @JoinColumn(name = "supplier_id"),

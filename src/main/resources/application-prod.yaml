@@ -1,0 +1,60 @@
+server:
+  port: 8085
+
+spring:
+  datasource:
+    url: ${PROD_DB_URL}
+    username: ${PROD_DB_USERNAME}
+    password: ${PROD_DB_PASSWORD}
+  liquibase:
+    change-log: classpath:liquibase/db.changelog-master.xml
+    url: ${PROD_DB_URL}
+    user: ${PROD_DB_USER}
+    password: ${PROD_DB_PASSWORD}
+  cloud:
+    aws:
+      credentials:
+        secret-key: ${AWS_SECRET_KEY}
+        access-key: ${AWS_ACCESS_KEY}
+      region:
+        static: eu-north-1
+  servlet:
+    multipart:
+      max-file-size: 10MB
+  messages:
+    encoding: UTF-8
+  mail:
+    host: smtp.gmail.com
+    port: 465
+    protocol: smtps
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
+  debug: true
+
+s3:
+  pictures:
+    bucket: plantsearch
+    type:
+      image: images/
+      sketch: sketches/
+
+jwt:
+  password:
+    encoder:
+      iteration: ${ENCODER_ITERATION}
+      keyLength: ${ENCODER_KEY_LENGTH}
+      secret: ${ENCODER_SECRET}
+  token:
+    expired: 36000000
+    secret: ${TOKEN_SECRET}
+
+springdoc:
+  api-docs:
+    path: /swagger
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+        exclude: "trace"

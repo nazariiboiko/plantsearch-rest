@@ -20,8 +20,6 @@ spring:
       max-file-size: 10MB
   messages:
     encoding: UTF-8
-  profiles:
-    active: production
   mail:
     host: smtp.gmail.com
     port: 465
