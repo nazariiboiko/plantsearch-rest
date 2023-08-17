@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import net.example.plantsearchrest.entity.Role;
 import net.example.plantsearchrest.security.jwt.JwtTokenFilter;
 import net.example.plantsearchrest.security.jwt.JwtTokenProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -28,6 +29,9 @@ public class SecurityConfig implements WebMvcConfigurer {
     private final String[] adminRoutes = {"/api/admin/**"};
     private final JwtTokenProvider jwtTokenProvider;
 
+    @Value("${spring.security.cors.client}")
+    private String urlClient;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -50,7 +54,7 @@ public class SecurityConfig implements WebMvcConfigurer {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(("http://localhost:3000")));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", urlClient));
         configuration.setAllowedMethods(Arrays.asList("*"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);

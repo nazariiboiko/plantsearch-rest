@@ -27,6 +27,9 @@ spring:
     protocol: smtps
     username: ${EMAIL_USERNAME}
     password: ${EMAIL_PASSWORD}
+  security:
+    cors:
+      client: ${CLIENT_URL}
   debug: true
 
 s3:
