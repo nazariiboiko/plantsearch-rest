@@ -44,7 +44,6 @@ public class PlantServiceImpl implements PlantService {
 
     @Override
     public List<PlantDto> getAll() {
-        log.info("IN getAll | return all objects");
         return plantRep.findAll().stream()
                 .map(plantMapper::mapEntityToDto)
                 .collect(Collectors.toList());
@@ -60,7 +59,6 @@ public class PlantServiceImpl implements PlantService {
         List<PlantEntity> randomList = new ArrayList<>();
         IntStream.range(0, amount).forEach(x -> randomList.add(plantRep.getById((long) (Math.abs(random.nextInt() % 500) + 1))));
 
-        log.info("IN getRandom | return {} objects", amount);
         return randomList.stream()
                 .map(plantMapper::mapEntityToDto)
                 .collect(Collectors.toList());
@@ -71,11 +69,8 @@ public class PlantServiceImpl implements PlantService {
         Optional<PlantEntity> entityOptional = plantRep.findById(id);
         if (entityOptional.isPresent()) {
             PlantEntity entity = entityOptional.get();
-            log.info("IN getById - return object with {} id", id);
-
             return plantMapper.mapEntityToDto(entity);
         } else {
-            log.info("IN getById - object with {} id not found", id);
             return null;
         }
     }
@@ -85,18 +80,14 @@ public class PlantServiceImpl implements PlantService {
         Optional<PlantEntity> entityOptional = plantRep.findById(id);
         if (entityOptional.isPresent()) {
             PlantEntity entity = entityOptional.get();
-            log.info("IN getEntityById - return object with {} id", id);
-
             return entity;
         } else {
-            log.info("IN geEntitytById -n object with {} id not found", id);
             return null;
         }
     }
 
     @Override
     public PlantDto getByName(String name) {
-        log.info("IN getByName - return {} object", name);
         return plantMapper.mapEntityToDto(plantRep.getByName(name));
     }
 
@@ -104,13 +95,9 @@ public class PlantServiceImpl implements PlantService {
     public List<PlantDto> findByMatchingName(String name) {
 
         if (Character.UnicodeBlock.of(name.charAt(1)) == Character.UnicodeBlock.CYRILLIC) {
-            log.info("IN findByMatchingName - return objects by cyryllic name {}", name);
             return findByUaName(name);
         } else if (Character.UnicodeBlock.of(name.charAt(0)) == Character.UnicodeBlock.BASIC_LATIN) {
-            log.info("IN finByMatchingName - return objects by latin name {}", name);
             return findByLaName(name);
-        } else {
-            log.error("IN findByMatchingName - not recognized symbol {}", name);
         }
         return new ArrayList<>();
     }
@@ -129,7 +116,6 @@ public class PlantServiceImpl implements PlantService {
 
     @Override
     public long getTotalRowCount() {
-        log.info("IN getTotalRowCount - return current count");
         return plantRep.count();
     }
 

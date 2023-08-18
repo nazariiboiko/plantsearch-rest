@@ -1,4 +1,3 @@
-
 spring:
   datasource:
     url: ${PROD_DB_URL}
@@ -30,7 +29,7 @@ spring:
   security:
     cors:
       client: ${CLIENT_URL}
-  debug: true
+  debug: false
 
 s3:
   pictures:
@@ -57,5 +56,4 @@ management:
   endpoints:
     web:
       exposure:
-        include: "*"
-        exclude: "trace"
+        exclude:*

@@ -2,17 +2,20 @@ server:
   port: 8085
 
 spring:
-  config:
-    location: classpath:/secrets.properties
   datasource:
     url: jdbc:postgresql://localhost:5432/plants
     username: postgres
+    password: root
   liquibase:
     change-log: classpath:liquibase/db.changelog-master.xml
     url: jdbc:postgresql://localhost:5432/plants
     user: postgres
+    password: root
   cloud:
     aws:
+      credentials:
+        secret-key: ${AWS_SECRET_KEY}
+        access-key: ${AWS_ACCESS_KEY}
       region:
         static: eu-north-1
   servlet:
@@ -24,7 +27,12 @@ spring:
     host: smtp.gmail.com
     port: 465
     protocol: smtps
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
   debug: true
+  security:
+    cors:
+      client:
 
 s3:
   pictures:
@@ -38,8 +46,10 @@ jwt:
     encoder:
       iteration: 64
       keyLength: 256
+      secret: passwordsecretstring
   token:
     expired: 36000000
+    secret: somesecretstring
 
 springdoc:
   api-docs:

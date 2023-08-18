@@ -37,9 +37,6 @@ public class FavouriteController implements FavouritesApi {
                 .getFavourites().stream()
                 .map(x -> plantMapper.mapEntityToDto(x.getPlant()))
                 .collect(Collectors.toList());
-
-        log.info("IN getFavouritesById - returned list of favourites of user {}", user.getId());
-
         return favourites;
     }
 

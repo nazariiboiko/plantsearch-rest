@@ -17,7 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.awt.print.Pageable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -32,6 +31,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final MailSender mailSender;
+    private final UserMapper userMapper = UserMapper.INSTANCE;
 
     @Override
     @Transactional
@@ -70,53 +70,35 @@ public class UserServiceImpl implements UserService {
         return registeredUserEntity;
     }
 
-    private boolean validate(UserEntity user) {
-        throw new UnsupportedOperationException();
-    }
-
     @Override
     public List<UserEntity> getAll() {
         List<UserEntity> userEntityList = userRepository.findAll();
-        log.info("IN getAll - {} users found", userEntityList.size());
         return userEntityList;
-    }
-
-    @Override
-    public List<UserEntity> getAll(Pageable pageable) {
-        return null;
     }
 
     @Override
     public UserEntity findByLogin(String username) {
         UserEntity userEntity = userRepository.findByLogin(username);
-        log.info("IN findByUsername - users: {} found by username: {}", userEntity, username);
         return userEntity;
     }
 
     @Override
     public UserEntity findById(Long id) {
-        UserEntity userEntity = userRepository.findById(id).orElse(null);
-
-        if(userEntity == null) {
-            log.warn("IN findById - user: {] not found", id);
-            return null;
-        }
-
-        log.info("IN findById - user found by id: {}", id);
-        return userEntity;
+        return userRepository.findById(id).orElse(null);
     }
 
     @Override
     public void delete(Long id) {
-        log.info("IN delete - user: {} successfully deleted", id);
         userRepository.deleteById(id);
+        log.info("IN delete - user: {} successfully deleted", id);
     }
 
     @Override
     @Transactional
-    public void update(UserEntity entity) {
-        log.info("IN update - updated id: {}", entity.getId());
-        UserEntity user = userRepository.findById(entity.getId()).orElseThrow(null);
+    public void update(UserDto dto) {
+        log.info("IN update - updated id: {}", dto.getId());
+        UserEntity user = userRepository.findById(dto.getId()).orElseThrow(null);
+        UserEntity entity = userMapper.mapDtoToEntity(dto);
         UserMapper.INSTANCE.updateUserEntity(entity, user);
     }
 

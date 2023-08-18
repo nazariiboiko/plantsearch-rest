@@ -30,11 +30,9 @@ public class FavouriteServiceImpl implements FavouriteService {
             fav = new Favourite();
             fav.setUser(user);
             fav.setPlant(plant);
-            favouriteRep.save(fav);
-            log.info("IN changeLikeStatement - user {} has liked plant {}", user.getLogin(), plantId);
+            favouriteRep.save(fav);   //like
         } else {
-            favouriteRep.delete(fav);
-            log.info("IN changeLikeStatement - user {} has removed like from plant {}", user.getLogin(), plantId);
+            favouriteRep.delete(fav); //remove like
         }
     }
 }

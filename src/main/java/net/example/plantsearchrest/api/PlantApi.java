@@ -93,7 +93,7 @@ public interface PlantApi {
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/update")
     @PreAuthorize("hasAuthority('ADMIN')")
-    ResponseEntity updatePlant(
+    ResponseEntity<Long> updatePlant(
             @ApiParam(value = "Plant DTO")
             @RequestPart PlantDto plantDto,
             @ApiParam(value = "Image of plant")
@@ -108,7 +108,7 @@ public interface PlantApi {
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/delete")
     @PreAuthorize("hasAuthority('ADMIN')")
-    ResponseEntity deletePlant(
+    ResponseEntity<Void> deletePlant(
             @ApiParam(value = "Plant ID")
             @RequestParam long id);
 }

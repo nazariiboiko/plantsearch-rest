@@ -8,6 +8,11 @@ import java.util.stream.Collectors;
 public class PageUtil {
 
     static public SinglePage create(List data, int pageNumber, int pageSize) {
+        if(pageNumber <= 0)
+            pageNumber = 1;
+        if(pageSize <= 0)
+            pageSize = 1;
+
         List sortedData = (List) data.stream().sorted().collect(Collectors.toList());
         return new SinglePage().toBuilder()
                 .pageSize(pageSize)

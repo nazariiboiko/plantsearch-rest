@@ -18,12 +18,10 @@ public class MailSenderImpl implements MailSender {
     @Override
     public void send(String to, String subject, String message) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
-
         mailMessage.setFrom(username);
         mailMessage.setTo(to);
         mailMessage.setSubject(subject);
         mailMessage.setText(message);
-
         mailSender.send(mailMessage);
     }
 }
