@@ -33,7 +33,7 @@ spring:
 
 s3:
   pictures:
-    bucket: plantsearch
+    bucket: plantsearch/
     type:
       image: images
       sketch: sketches
