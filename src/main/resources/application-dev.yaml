@@ -32,14 +32,14 @@ spring:
   debug: true
   security:
     cors:
-      client:
+      client: ${CORS_CLIENT}
 
 s3:
   pictures:
-    bucket: plantsearch
+    bucket: plantsearch/
     type:
-      image: images/
-      sketch: sketches/
+      image: dev-images
+      sketch: dev-sketches
 
 jwt:
   password:

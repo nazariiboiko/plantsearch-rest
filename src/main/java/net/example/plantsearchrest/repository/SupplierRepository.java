@@ -10,5 +10,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SupplierRepository extends JpaRepository<SupplierEntity, Long> {
     Page<SupplierEntity> findAll(Pageable pageable);
+    SupplierEntity findByName(String name);
     void deleteById(Long id);
 }

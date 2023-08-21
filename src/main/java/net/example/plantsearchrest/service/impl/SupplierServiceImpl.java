@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.example.plantsearchrest.dto.SupplierDto;
 import net.example.plantsearchrest.entity.SupplierEntity;
+import net.example.plantsearchrest.exception.ServiceException;
 import net.example.plantsearchrest.mapper.SupplierMapper;
 import net.example.plantsearchrest.repository.SupplierRepository;
 import net.example.plantsearchrest.service.SupplierService;
@@ -22,7 +23,6 @@ public class SupplierServiceImpl implements SupplierService {
 
     @Override
     public List<SupplierDto> getAll() {
-        log.info("IN getAll - return all suppliers");
         List<SupplierEntity> list = supplierRepo.findAll();
 
         List<SupplierDto> listDto = list.stream()
@@ -34,18 +34,20 @@ public class SupplierServiceImpl implements SupplierService {
 
     @Override
     public SupplierDto getById(long id) {
-        log.info("IN getById - return supplier id {}", id);
         SupplierEntity ent = supplierRepo.getById(id);
         return mapper.mapEntityToDto(ent);
     }
 
     @Override
     public SupplierDto createSupplier(SupplierDto dto) {
+        if(supplierRepo.findByName(dto.getName()) != null)
+            throw new ServiceException("Name is already taken", "NAME_TAKEN");
+
         SupplierEntity entity = new SupplierEntity();
         entity.setId(-1L);
         mapper.updateSupplierEntity(dto, entity);
         SupplierEntity res = supplierRepo.save(entity);
-        log.info("IN createSupplier - created new instance id {}", res.getId());
+        log.info("IN createSupplier - created new supplier name:{}(id:{})", res.getName(), res.getId());
 
         return mapper.mapEntityToDto(res);
     }

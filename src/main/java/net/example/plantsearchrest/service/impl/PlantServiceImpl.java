@@ -8,12 +8,12 @@ import lombok.extern.slf4j.Slf4j;
 import net.example.plantsearchrest.dto.PlantDto;
 import net.example.plantsearchrest.entity.PlantEntity;
 import net.example.plantsearchrest.mapper.PlantMapper;
-import net.example.plantsearchrest.model.FolderName;
 import net.example.plantsearchrest.model.PlantFilterModel;
 import net.example.plantsearchrest.repository.PlantRepository;
 import net.example.plantsearchrest.repository.S3Repository;
 import net.example.plantsearchrest.service.PlantService;
 import net.example.plantsearchrest.utils.PlantEntityCriteriaBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,7 +33,14 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 public class PlantServiceImpl implements PlantService {
     private final Random random = new Random();
-    private final String bucketName = "plantsearch/";
+
+    @Value("${s3.pictures.bucket}")
+    private String bucketName;
+
+    @Value("${s3.pictures.type.image}")
+    private String imagePath;
+    @Value("${s3.pictures.type.sketch}")
+    private String sketchePath;
 
     private final PlantRepository plantRep;
     private final S3Repository s3Rep;
@@ -135,10 +142,10 @@ public class PlantServiceImpl implements PlantService {
         PlantEntity instance = plantRep.save(entity);
 
         if(image != null) {
-            saveImageIntoS3(image, FolderName.IMAGE);
+            saveImageIntoS3(image, imagePath);
         }
         if(sketch != null) {
-            saveImageIntoS3(sketch, FolderName.SKETCH);
+            saveImageIntoS3(sketch, sketchePath);
         }
 
         log.info("IN create - created id:{}", instance.getId());
@@ -155,12 +162,12 @@ public class PlantServiceImpl implements PlantService {
         if(plant != null) {
 
             if(image != null && !StringUtil.equalsIgnoreCaseAndEmpty(image.getOriginalFilename(), plant.getImage())){
-                deleteImageFromS3(plant.getImage(), FolderName.IMAGE);
-                saveImageIntoS3(image, FolderName.IMAGE);
+                deleteImageFromS3(plant.getImage(), imagePath);
+                saveImageIntoS3(image, imagePath);
             }
             if(sketch != null && !StringUtil.equalsIgnoreCaseAndEmpty(sketch.getOriginalFilename(), plant.getSketch())) {
-                deleteImageFromS3(plant.getSketch(), FolderName.SKETCH);
-                saveImageIntoS3(sketch, FolderName.SKETCH);
+                deleteImageFromS3(plant.getSketch(), sketchePath);
+                saveImageIntoS3(sketch, sketchePath);
             }
 
             log.info("IN update - previous values: {}, current values: {}", plant, entity);
@@ -175,11 +182,11 @@ public class PlantServiceImpl implements PlantService {
         PlantEntity entity = plantRep.getById(id);
         try {
             if(StringUtil.isNotEmpty(entity.getImage())) {
-                s3Rep.deleteImage(bucketName + FolderName.IMAGE.getValue(), entity.getImage());
+                s3Rep.deleteImage(bucketName + imagePath, entity.getImage());
             }
 
             if(StringUtil.isNotEmpty(entity.getSketch())) {
-                s3Rep.deleteImage(bucketName + FolderName.SKETCH.getValue(), entity.getSketch());
+                s3Rep.deleteImage(bucketName + sketchePath, entity.getSketch());
             }
 
             plantRep.deleteById(id);
@@ -189,21 +196,21 @@ public class PlantServiceImpl implements PlantService {
         }
     }
 
-    private void saveImageIntoS3(MultipartFile image, FolderName folderName) {
+    private void saveImageIntoS3(MultipartFile image, String folderName) {
         try {
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(image.getSize());
             metadata.setContentType(image.getContentType());
-            s3Rep.uploadImage(bucketName + folderName.getValue(), image.getOriginalFilename(), image.getInputStream(), metadata);
+            s3Rep.uploadImage(bucketName + folderName, image.getOriginalFilename(), image.getInputStream(), metadata);
             log.info("IN saveImageIntoS3 - image {} was successfully saved into folder {} in bucket {}", image.getOriginalFilename(), folderName, bucketName);
         } catch (IOException exp) {
             throw new IllegalStateException("Failed to read the image", exp);
         }
     }
 
-    private void deleteImageFromS3(String imageName, FolderName folderName) throws AmazonServiceException {
+    private void deleteImageFromS3(String imageName, String folderName) throws AmazonServiceException {
         try {
-            s3Rep.deleteImage(bucketName + folderName.getValue(), imageName);
+            s3Rep.deleteImage(bucketName + folderName, imageName);
             log.info("IN deleteImageFromS3 - image {} has been deleted from folder {} in bucket {}", imageName, folderName, bucketName);
         } catch (AmazonServiceException e) {
             throw new AmazonServiceException("Failed to delete the image", e);

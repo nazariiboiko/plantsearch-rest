@@ -44,6 +44,18 @@ public interface SupplierApi {
             @ApiParam(value = "Supplier DTO")
             @RequestBody SupplierDto supplierDto);
 
+    @ApiOperation("Delete supplier")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 400, message = "Bad request")
+    })
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/delete")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    ResponseEntity<?> deleteSupplier(
+            @ApiParam(value = "Supplier ID")
+            @RequestParam Long id);
+
     @ApiOperation("Create a new available plant for supplier")
     @ApiResponses({
             @ApiResponse(code = 201, message = "Created"),

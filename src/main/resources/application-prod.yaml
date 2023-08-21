@@ -35,8 +35,8 @@ s3:
   pictures:
     bucket: plantsearch
     type:
-      image: images/
-      sketch: sketches/
+      image: images
+      sketch: sketches
 
 jwt:
   password:
