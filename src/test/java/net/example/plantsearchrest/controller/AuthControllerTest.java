@@ -97,7 +97,7 @@ public class AuthControllerTest {
 
     @Test
     void testRegister_Success() {
-        UserDto userDto = new UserDto(null, "admin@gmail.com", "admin", "admin", Role.ADMIN, Status.ACTIVE, LocalDateTime.now(), LocalDateTime.now());
+        UserDto userDto = new UserDto(null, "admin@gmail.com", "admin", "admin", Role.ADMIN, Status.ACTIVE, LocalDate.now(), LocalDateTime.now());
         String lang = "en";
         String messageCode = "CONFIRM_EMAIL";
         String messageText = "Please confirm your email.";
@@ -115,7 +115,7 @@ public class AuthControllerTest {
 
     @Test
     void testRegister_Failure_UserExists() {
-        UserDto userDto = new UserDto(null, "admin@gmail.com", "admin", "admin", Role.ADMIN, Status.ACTIVE, LocalDateTime.now(), LocalDateTime.now());
+        UserDto userDto = new UserDto(null, "admin@gmail.com", "admin", "admin", Role.ADMIN, Status.ACTIVE, LocalDate.now(), LocalDateTime.now());
         String lang = "en";
         String messageText = "User already exists.";
         String messageCode = "USER_ALREADY_EXISTS";
@@ -134,7 +134,7 @@ public class AuthControllerTest {
 
     @Test
     void testActivate_Success() throws JwtAuthenticationException {
-        UserDto userDto = new UserDto(null, "admin@gmail.com", "admin", "admin", Role.ADMIN, Status.ACTIVE, LocalDateTime.now(), LocalDateTime.now());
+        UserDto userDto = new UserDto(null, "admin@gmail.com", "admin", "admin", Role.ADMIN, Status.ACTIVE, LocalDate.now(), LocalDateTime.now());
         String activationCode = "123456";
         String lang = "en";
         Map<Object, Object> jwtToken = new HashMap<>() {{
