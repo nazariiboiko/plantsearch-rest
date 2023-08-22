@@ -10,9 +10,7 @@ import org.mapstruct.factory.Mappers;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
-
     UserEntity mapDtoToEntity(UserDto userDto);
-
     UserDto mapEntityToDto(UserEntity userEntity);
     void updateUserEntity(UserEntity from, @MappingTarget UserEntity to);
 }

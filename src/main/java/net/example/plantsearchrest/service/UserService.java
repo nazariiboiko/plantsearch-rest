@@ -11,7 +11,7 @@ import java.util.Map;
 public interface UserService {
     Map<Object, Object> login(String username, String token) throws JwtAuthenticationException;
     UserEntity register(UserEntity userEntity);
-    List<UserEntity> getAll();
+    List<UserDto> getAll();
     UserEntity findByLogin(String username);
     UserEntity findById(Long id);
     void delete(Long id);

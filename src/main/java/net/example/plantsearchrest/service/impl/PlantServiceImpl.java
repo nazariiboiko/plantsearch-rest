@@ -33,10 +33,8 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 public class PlantServiceImpl implements PlantService {
     private final Random random = new Random();
-
     @Value("${s3.pictures.bucket}")
     private String bucketName;
-
     @Value("${s3.pictures.type.image}")
     private String imagePath;
     @Value("${s3.pictures.type.sketch}")
@@ -47,7 +45,6 @@ public class PlantServiceImpl implements PlantService {
     private final PlantMapper plantMapper = PlantMapper.INSTANCE;
     @PersistenceContext
     private EntityManager entityManager;
-
 
     @Override
     public List<PlantDto> getAll() {

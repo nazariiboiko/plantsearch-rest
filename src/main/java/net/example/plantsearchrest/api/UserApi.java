@@ -2,10 +2,13 @@ package net.example.plantsearchrest.api;
 
 import io.swagger.annotations.*;
 import net.example.plantsearchrest.dto.UserDto;
+import net.example.plantsearchrest.model.SinglePage;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 
@@ -17,7 +20,9 @@ public interface UserApi {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    List<UserDto>  getAllUsers();
+    SinglePage<UserDto> getAllUsers(
+            @ApiIgnore("Ignored because swagger ui shows the wrong params")
+            Pageable pageable);
 
     @ApiOperation("Get user by username")
     @ApiResponses({

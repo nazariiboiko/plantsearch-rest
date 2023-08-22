@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import net.example.plantsearchrest.entity.Role;
 import net.example.plantsearchrest.entity.Status;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -20,8 +21,8 @@ public class UserDto implements Comparable<UserDto> {
     private String password;
     private Role role;
     private Status status;
-    private LocalDateTime createdAt;
-    private LocalDateTime visitedAt;
+    private LocalDate registrationDate;
+    private LocalDateTime lastLogin;
 
     @Override
     public int compareTo(UserDto other) {

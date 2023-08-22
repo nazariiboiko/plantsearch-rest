@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -71,9 +72,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserEntity> getAll() {
+    public List<UserDto> getAll() {
         List<UserEntity> userEntityList = userRepository.findAll();
-        return userEntityList;
+        return userEntityList.stream().map(userMapper::mapEntityToDto).collect(Collectors.toList());
     }
 
     @Override
@@ -105,7 +106,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void setStatus(Long id, Status status) {
-        log.info("IN block - blocked {} user", id);
+        log.info("IN setStatus - blocked {} user", id);
         userRepository.findById(id)
                 .orElseThrow(null)
                 .setStatus(status);
