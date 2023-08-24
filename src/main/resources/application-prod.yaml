@@ -47,7 +47,10 @@ jwt:
   token:
     expired: 36000000
     secret: ${TOKEN_SECRET}
-
+  refresh:
+    size: ${JWT_REFRESH_SIZE}
+    privateKey: ${JWT_PRIVATE_KEY}
+    publicKey: ${JWT_PUBLIC_KEY}
 springdoc:
   api-docs:
     path: /swagger
