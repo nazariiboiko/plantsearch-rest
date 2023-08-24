@@ -50,6 +50,10 @@ jwt:
   token:
     expired: 36000000
     secret: somesecretstring
+  refresh:
+    size: 1024
+    privateKey: ${JWT_PRIVATE_KEY}
+    publicKey: ${JWT_PUBLIC_KEY}
 
 springdoc:
   api-docs:

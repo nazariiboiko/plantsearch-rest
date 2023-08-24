@@ -97,4 +97,10 @@
             <column name="activate_code" type="VARCHAR(6)"/>
         </addColumn>
     </changeSet>
+
+    <changeSet id="1.0.5" author="nazarii.boiko" labels="user-activation-code">
+        <addColumn tableName="users">
+            <column name="refresh_token" type="VARCHAR"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

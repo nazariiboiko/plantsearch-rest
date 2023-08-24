@@ -57,15 +57,21 @@ public class PlantServiceImpl implements PlantService {
     public List<PlantDto> getRandom(int amount) {
         if(amount < 1)
             amount = 1;
-        if(amount > 50)
-            amount = 50;
+        if(amount > 100)
+            amount = 100;
 
-        List<PlantEntity> randomList = new ArrayList<>();
-        IntStream.range(0, amount).forEach(x -> randomList.add(plantRep.getById((long) (Math.abs(random.nextInt() % 500) + 1))));
+        List<PlantDto> randomList = new ArrayList<>();
+        long max = getTotalRowCount();
+        for(int i = 0; i < amount; i++) {
+            PlantEntity entity = null;
+            while(entity == null) {
+                long randomIndex = random.nextLong() % max + 1;
+                entity = plantRep.findById(randomIndex).orElse(null);
+            }
+            randomList.add(plantMapper.mapEntityToDto(entity));
+        }
 
-        return randomList.stream()
-                .map(plantMapper::mapEntityToDto)
-                .collect(Collectors.toList());
+        return randomList;
     }
 
     @Override

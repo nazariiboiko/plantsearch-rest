@@ -9,6 +9,7 @@ import net.example.plantsearchrest.entity.UserEntity;
 import net.example.plantsearchrest.exception.JwtAuthenticationException;
 import net.example.plantsearchrest.exception.RegistryException;
 import net.example.plantsearchrest.mapper.UserMapper;
+import net.example.plantsearchrest.model.AuthResponse;
 import net.example.plantsearchrest.repository.UserRepository;
 import net.example.plantsearchrest.service.MailSender;
 import net.example.plantsearchrest.service.UserService;
@@ -19,9 +20,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -36,14 +35,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public Map<Object, Object> login(String username, String token) throws JwtAuthenticationException {
+    public AuthResponse login(String username, String token, String refreshToken) throws JwtAuthenticationException {
         UserEntity userFromDb = userRepository.findByLogin(username);
         userFromDb.setLastLogin(LocalDateTime.now());
+        userFromDb.setRefreshToken(refreshToken);
         userRepository.save(userFromDb);
-        Map<Object, Object> response = new HashMap<>() {{
-            put("username", username);
-            put("token", token);
-        }};
+
+        AuthResponse response = new AuthResponse();
+        response.setJwtToken(token);
+        response.setRefreshToken(refreshToken);
 
         return response;
     }
@@ -123,6 +123,4 @@ public class UserServiceImpl implements UserService {
             throw new RegistryException("Activation code does not match", "INVALID_CODE");
         }
     }
-
-
 }

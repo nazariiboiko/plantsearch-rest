@@ -8,7 +8,9 @@ import net.example.plantsearchrest.entity.UserEntity;
 import net.example.plantsearchrest.exception.JwtAuthenticationException;
 import net.example.plantsearchrest.exception.RegistryException;
 import net.example.plantsearchrest.mapper.UserMapper;
+import net.example.plantsearchrest.model.AuthRefreshRequest;
 import net.example.plantsearchrest.model.AuthRequest;
+import net.example.plantsearchrest.model.AuthResponse;
 import net.example.plantsearchrest.security.jwt.JwtTokenProvider;
 import net.example.plantsearchrest.service.UserService;
 import net.example.plantsearchrest.utils.Messages;
@@ -17,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Locale;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -32,10 +33,9 @@ public class AuthController implements AuthApi {
     @Override
     public ResponseEntity<?> login(AuthRequest request, String lang) {
         try {
-            String token = jwtTokenProvider.authenticate(request.getLogin(), request.getPassword());
-            Map<Object, Object> jwtToken = userService.login(request.getLogin(), token);
-            log.info("IN login - user {} has logged in", jwtToken.get("username"));
-            return ResponseEntity.ok(jwtToken);
+            AuthResponse response = jwtTokenProvider.authenticate(request.getLogin(), request.getPassword());
+            log.info("IN login - user {} has logged in", request.getLogin());
+            return ResponseEntity.ok(response);
         }
         catch (JwtAuthenticationException e) {
             String message = messages.getMessage(e.getMessageCode(), new Locale(lang));
@@ -66,6 +66,16 @@ public class AuthController implements AuthApi {
         } catch (RegistryException e) {
             String message = messages.getMessage(e.getMessageCode(), new Locale(lang));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> refreshToken(AuthRefreshRequest request) {
+        try {
+            AuthResponse response = jwtTokenProvider.createTokenByRefreshToken(request.getRefreshToken());
+            return ResponseEntity.ok().body(response);
+        } catch (JwtAuthenticationException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 }

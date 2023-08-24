@@ -42,6 +42,9 @@ public class UserEntity extends BaseEntity{
     @Column(name = "registration_date")
     private LocalDate registrationDate;
 
+    @Column(name = "refresh_token")
+    private String refreshToken;
+
     @ToString.Include(name = "password")
     private String maskPassword() {
         StringBuilder sb = new StringBuilder();

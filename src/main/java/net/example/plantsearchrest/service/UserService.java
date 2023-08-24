@@ -4,12 +4,13 @@ import net.example.plantsearchrest.dto.UserDto;
 import net.example.plantsearchrest.entity.Status;
 import net.example.plantsearchrest.entity.UserEntity;
 import net.example.plantsearchrest.exception.JwtAuthenticationException;
+import net.example.plantsearchrest.model.AuthResponse;
 
 import java.util.List;
 import java.util.Map;
 
 public interface UserService {
-    Map<Object, Object> login(String username, String token) throws JwtAuthenticationException;
+    AuthResponse login(String username, String token, String refreshToken) throws JwtAuthenticationException;
     UserEntity register(UserEntity userEntity);
     List<UserDto> getAll();
     UserEntity findByLogin(String username);

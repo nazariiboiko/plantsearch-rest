@@ -1,6 +1,7 @@
 package net.example.plantsearchrest.api;
 
 import io.swagger.annotations.*;
+import net.example.plantsearchrest.model.AuthRefreshRequest;
 import net.example.plantsearchrest.model.AuthRequest;
 import net.example.plantsearchrest.dto.UserDto;
 import org.springframework.http.ResponseEntity;
@@ -46,4 +47,15 @@ public interface AuthApi {
                             @RequestParam String code,
                             @ApiParam(value = "language")
                             @RequestParam(defaultValue = "en") String language);
+
+    @ApiOperation("create a new jwt token via refreshToken")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 400, message = "Bad request")
+    })
+    @PostMapping("/refresh")
+    ResponseEntity<?> refreshToken(
+            @ApiParam(value = "Refresh token")
+            @RequestBody AuthRefreshRequest request);
+
 }
