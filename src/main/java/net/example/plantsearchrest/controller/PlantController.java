@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.example.plantsearchrest.api.PlantApi;
 import net.example.plantsearchrest.dto.PlantDto;
+import net.example.plantsearchrest.dto.PlantPreviewDto;
 import net.example.plantsearchrest.entity.PlantEntity;
 import net.example.plantsearchrest.model.PlantFilterModel;
 import net.example.plantsearchrest.model.SinglePage;
@@ -27,8 +28,8 @@ public class PlantController implements PlantApi {
     private final PlantService plantService;
 
     @Override
-    public SinglePage<PlantDto> getPlantList(Pageable pageable) {
-        List<PlantDto> list = plantService.getAll();
+    public SinglePage<PlantPreviewDto> getPlantList(Pageable pageable) {
+        List<PlantPreviewDto> list = plantService.getAll();
         return PageUtil.create(list, pageable.getPageNumber(), pageable.getPageSize());
     }
 
@@ -38,19 +39,19 @@ public class PlantController implements PlantApi {
     }
 
     @Override
-    public List<PlantDto> getRandomPlantList(int amount) {
+    public List<PlantPreviewDto> getRandomPlantList(int amount) {
         return plantService.getRandom(amount);
     }
 
     @Override
-    public SinglePage<PlantDto> searchPlantsByName(String keyword, Pageable pageable) {
-        List<PlantDto> list = plantService.findByMatchingName(keyword);
+    public SinglePage<PlantPreviewDto> searchPlantsByName(String keyword, Pageable pageable) {
+        List<PlantPreviewDto> list = plantService.findByMatchingName(keyword);
         return PageUtil.create(list, pageable.getPageNumber(), pageable.getPageSize());
     }
 
     @Override
-    public SinglePage<PlantDto> filterPlants(PlantFilterModel filter, Pageable pageable) {
-        List<PlantDto> list = plantService.getAllByCriterias(filter);
+    public SinglePage<PlantPreviewDto> filterPlants(PlantFilterModel filter, Pageable pageable) {
+        List<PlantPreviewDto> list = plantService.getAllByCriterias(filter);
         return PageUtil.create(list, pageable.getPageNumber(), pageable.getPageSize());
     }
 

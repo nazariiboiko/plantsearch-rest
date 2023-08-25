@@ -2,6 +2,7 @@ package net.example.plantsearchrest.api;
 
 import io.swagger.annotations.*;
 
+import net.example.plantsearchrest.dto.PlantPreviewDto;
 import net.example.plantsearchrest.model.SinglePage;
 import net.example.plantsearchrest.dto.PlantDto;
 import net.example.plantsearchrest.model.PlantFilterModel;
@@ -25,7 +26,7 @@ public interface PlantApi {
     @ApiResponse(code = 200, message = "OK")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    SinglePage<PlantDto> getPlantList(@ApiIgnore("Ignored because swagger ui shows the wrong params")
+    SinglePage<PlantPreviewDto> getPlantList(@ApiIgnore("Ignored because swagger ui shows the wrong params")
                                 Pageable pageable);
 
     @ApiOperation("Get plant by id")
@@ -43,7 +44,7 @@ public interface PlantApi {
     @ApiResponse(code = 200, message = "OK")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/random")
-    List<PlantDto> getRandomPlantList(
+    List<PlantPreviewDto> getRandomPlantList(
             @ApiParam(value = "Amount of random plants")
             @RequestParam(value = "amount", required = false, defaultValue = "4") int amount);
 
@@ -53,7 +54,7 @@ public interface PlantApi {
     })
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/search")
-    SinglePage<PlantDto> searchPlantsByName(
+    SinglePage<PlantPreviewDto> searchPlantsByName(
             @ApiParam(value = "keyword string")
             @RequestParam String keyword,
             @ApiIgnore("Ignored because swagger ui shows the wrong params")
@@ -63,7 +64,7 @@ public interface PlantApi {
     @ApiResponse(code = 200, message = "OK")
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/filter")
-    SinglePage<PlantDto> filterPlants(
+    SinglePage<PlantPreviewDto> filterPlants(
             @ApiParam(value = "Plant filter model")
             @RequestBody PlantFilterModel filter,
             @ApiIgnore("Ignored because swagger ui shows the wrong params")

@@ -6,6 +6,7 @@ import liquibase.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.example.plantsearchrest.dto.PlantDto;
+import net.example.plantsearchrest.dto.PlantPreviewDto;
 import net.example.plantsearchrest.entity.PlantEntity;
 import net.example.plantsearchrest.mapper.PlantMapper;
 import net.example.plantsearchrest.model.PlantFilterModel;
@@ -26,7 +27,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Slf4j
 @Service
@@ -47,28 +47,28 @@ public class PlantServiceImpl implements PlantService {
     private EntityManager entityManager;
 
     @Override
-    public List<PlantDto> getAll() {
+    public List<PlantPreviewDto> getAll() {
         return plantRep.findAll().stream()
-                .map(plantMapper::mapEntityToDto)
+                .map(plantMapper::mapEntityToPreviewDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<PlantDto> getRandom(int amount) {
+    public List<PlantPreviewDto> getRandom(int amount) {
         if(amount < 1)
             amount = 1;
         if(amount > 100)
             amount = 100;
 
-        List<PlantDto> randomList = new ArrayList<>();
+        List<PlantPreviewDto> randomList = new ArrayList<>();
         long max = getTotalRowCount();
         for(int i = 0; i < amount; i++) {
             PlantEntity entity = null;
             while(entity == null) {
-                long randomIndex = random.nextLong() % max + 1;
+                long randomIndex = random.nextLong() % 1300 + 1;
                 entity = plantRep.findById(randomIndex).orElse(null);
             }
-            randomList.add(plantMapper.mapEntityToDto(entity));
+            randomList.add(plantMapper.mapEntityToPreviewDto(entity));
         }
 
         return randomList;
@@ -102,7 +102,7 @@ public class PlantServiceImpl implements PlantService {
     }
 
     @Override
-    public List<PlantDto> findByMatchingName(String name) {
+    public List<PlantPreviewDto> findByMatchingName(String name) {
 
         if (Character.UnicodeBlock.of(name.charAt(1)) == Character.UnicodeBlock.CYRILLIC) {
             return findByUaName(name);
@@ -112,15 +112,15 @@ public class PlantServiceImpl implements PlantService {
         return new ArrayList<>();
     }
 
-    private List<PlantDto> findByUaName(String name) {
+    private List<PlantPreviewDto> findByUaName(String name) {
         return plantRep.findByNameIsContainingIgnoreCase(name).stream()
-                .map(plantMapper::mapEntityToDto)
+                .map(plantMapper::mapEntityToPreviewDto)
                 .collect(Collectors.toList());
     }
 
-    private List<PlantDto> findByLaName(String name) {
+    private List<PlantPreviewDto> findByLaName(String name) {
         return plantRep.findByLatinNameIsContainingIgnoreCase(name).stream()
-                .map(plantMapper::mapEntityToDto)
+                .map(plantMapper::mapEntityToPreviewDto)
                 .collect(Collectors.toList());
     }
 
@@ -130,9 +130,9 @@ public class PlantServiceImpl implements PlantService {
     }
 
     @Override
-    public List<PlantDto> getAllByCriterias(PlantFilterModel filter) {
+    public List<PlantPreviewDto> getAllByCriterias(PlantFilterModel filter) {
         return PlantEntityCriteriaBuilder.buildQuery(filter, entityManager).stream()
-                .map(plantMapper::mapEntityToDto)
+                .map(plantMapper::mapEntityToPreviewDto)
                 .collect(Collectors.toList());
     }
 
