@@ -22,6 +22,8 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Component
@@ -140,8 +142,14 @@ public class JwtTokenProvider {
                 .getBody();
     }
 
-    public AuthResponse authenticate(String username, String password) throws JwtAuthenticationException {
-        UserEntity userEntity = userService.findByLogin(username);
+    public AuthResponse authenticate(String loginOrEmail, String password) throws JwtAuthenticationException {
+        UserEntity userEntity;
+        if(isValidEmail(loginOrEmail)) {
+            userEntity = userService.findByEmail(loginOrEmail);
+        } else {
+            userEntity = userService.findByLogin(loginOrEmail);
+        }
+
 
         if(userEntity == null) {
             throw new JwtAuthenticationException("Invalid username or password", "INVALID_CREDENTIALS");
@@ -149,9 +157,17 @@ public class JwtTokenProvider {
 
         if(userEntity.getStatus().equals(Status.ACTIVE)) {
             if(passwordEncoder.matches(password, userEntity.getPassword())) {
-                return userService.login(username, createToken(username, userEntity.getRole()), createRefreshToken(username));
+                return userService.login(userEntity.getLogin(), createToken(userEntity.getLogin(), userEntity.getRole()), createRefreshToken(userEntity.getLogin()));
             } else throw new JwtAuthenticationException("Invalid username or password", "INVALID_CREDENTIALS");
         } else throw new JwtAuthenticationException("User is blocked", "USER_BLOCKED");
+    }
+
+    public static boolean isValidEmail(String email) {
+        String emailPattern = "\\S+@\\S+\\.\\S+";
+
+        Pattern pattern = Pattern.compile(emailPattern);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 }
 

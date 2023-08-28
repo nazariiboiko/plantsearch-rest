@@ -54,7 +54,8 @@ public class SupplierServiceImpl implements SupplierService {
 
     @Override
     public void deleteSupplier(Long id) {
-        supplierRepo.deleteById(id);
-        log.info("IN deleteSupplier - supplier with id {} has been deleted", id);
+//        supplierRepo.deleteById(id);
+//        log.info("IN deleteSupplier - supplier with id {} has been deleted", id);
+        throw new UnsupportedOperationException();
     }
 }

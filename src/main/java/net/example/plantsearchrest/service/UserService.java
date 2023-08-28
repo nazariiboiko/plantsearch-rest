@@ -15,6 +15,9 @@ public interface UserService {
     List<UserDto> getAll();
     UserEntity findByLogin(String username);
     UserEntity findById(Long id);
+
+    UserEntity findByEmail(String email);
+
     void delete(Long id);
     void update(UserDto entity);
     void setStatus(Long id, Status status);

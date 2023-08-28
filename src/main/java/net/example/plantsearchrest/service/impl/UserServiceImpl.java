@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
 
         UserEntity registeredUserEntity = userRepository.save(userEntity);
         log.info("IN register - user: {} successfully registered", registeredUserEntity);
-        String confirmMessage = "Привіт " + userEntity.getLogin() + ", дякуємо що вирішили спробувати наш сервіс. Код для підтвердження вашої електронної пошти - " + code;
+        String confirmMessage = "Hello " + userEntity.getLogin() + ", thank you for trying out our service. Your email confirmation code is: " + code + ". We're excited to have you on board!";
         mailSender.send(userEntity.getEmail(), "Підтвердження пароля", confirmMessage);
         return registeredUserEntity;
     }
@@ -86,6 +86,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserEntity findById(Long id) {
         return userRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public UserEntity findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     @Override
