@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.example.plantsearchrest.entity.PlantEntity;
+import net.example.plantsearchrest.model.SinglePage;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
 public class SupplierDto implements Comparable<SupplierDto>{
     private Long id;
     private String name;
-    private List<PlantEntity> avaliablePlants;
+    private SinglePage<PlantPreviewDto> avaliablePlants;
 
     @Override
     public int compareTo(SupplierDto other) {

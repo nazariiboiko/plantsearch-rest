@@ -44,7 +44,7 @@ public class SupplierPlantServiceImpl implements SupplierPlantService {
         List<SupplierPlantEntity> list = supPlantRep.findByPlantId(plantId);
 
         List<SupplierDto> dto = list.stream()
-                .map(x -> mapper.mapEntityToDto(supRep.getById(x.getSupplierId())))
+                .map(x -> mapper.maptEntityToDtoIgnorePlants(supRep.getById(x.getSupplierId())))
                 .collect(Collectors.toList());
         dto.stream().forEach(x -> x.setAvaliablePlants(null));
 

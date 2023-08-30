@@ -8,6 +8,7 @@ import net.example.plantsearchrest.exception.ServiceException;
 import net.example.plantsearchrest.mapper.SupplierMapper;
 import net.example.plantsearchrest.repository.SupplierRepository;
 import net.example.plantsearchrest.service.SupplierService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,16 +27,17 @@ public class SupplierServiceImpl implements SupplierService {
         List<SupplierEntity> list = supplierRepo.findAll();
 
         List<SupplierDto> listDto = list.stream()
-                .map(mapper::mapEntityToDto)
+                .map(mapper::maptEntityToDtoIgnorePlants)
                 .collect(Collectors.toList());
         listDto.forEach(x -> x.setAvaliablePlants(null));
         return listDto;
     }
 
     @Override
-    public SupplierDto getById(long id) {
+    public SupplierDto getById(long id, Pageable pageable) {
         SupplierEntity ent = supplierRepo.getById(id);
-        return mapper.mapEntityToDto(ent);
+
+        return mapper.mapEntityToDto(ent, pageable);
     }
 
     @Override
@@ -49,7 +51,7 @@ public class SupplierServiceImpl implements SupplierService {
         SupplierEntity res = supplierRepo.save(entity);
         log.info("IN createSupplier - created new supplier name:{}(id:{})", res.getName(), res.getId());
 
-        return mapper.mapEntityToDto(res);
+        return mapper.maptEntityToDtoIgnorePlants(res);
     }
 
     @Override

@@ -30,7 +30,9 @@ public interface SupplierApi {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     SupplierDto getSupplierById(@ApiParam(value = "Supplier ID")
-                                @PathVariable long id);
+                                @PathVariable long id,
+                                @ApiIgnore("Ignored because swagger ui shows the wrong params")
+                                Pageable pageable);
 
     @ApiOperation("Create a new supplier")
     @ApiResponses({

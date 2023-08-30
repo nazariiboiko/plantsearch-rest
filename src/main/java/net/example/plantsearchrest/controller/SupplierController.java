@@ -34,8 +34,8 @@ public class SupplierController implements SupplierApi {
     }
 
     @Override
-    public SupplierDto getSupplierById(long id) {
-        return supplierService.getById(id);
+    public SupplierDto getSupplierById(long id, Pageable pageable) {
+        return supplierService.getById(id, pageable);
     }
 
     @Override
