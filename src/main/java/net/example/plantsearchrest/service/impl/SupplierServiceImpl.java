@@ -27,7 +27,7 @@ public class SupplierServiceImpl implements SupplierService {
         List<SupplierEntity> list = supplierRepo.findAll();
 
         List<SupplierDto> listDto = list.stream()
-                .map(mapper::maptEntityToDtoIgnorePlants)
+                .map(mapper::mapEntityToDtoIgnorePlants)
                 .collect(Collectors.toList());
         listDto.forEach(x -> x.setAvaliablePlants(null));
         return listDto;
@@ -51,7 +51,7 @@ public class SupplierServiceImpl implements SupplierService {
         SupplierEntity res = supplierRepo.save(entity);
         log.info("IN createSupplier - created new supplier name:{}(id:{})", res.getName(), res.getId());
 
-        return mapper.maptEntityToDtoIgnorePlants(res);
+        return mapper.mapEntityToDtoIgnorePlants(res);
     }
 
     @Override

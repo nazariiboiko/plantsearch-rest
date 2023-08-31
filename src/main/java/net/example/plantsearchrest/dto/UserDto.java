@@ -1,5 +1,6 @@
 package net.example.plantsearchrest.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,6 +24,7 @@ public class UserDto implements Comparable<UserDto> {
     private Status status;
     private LocalDate registrationDate;
     private LocalDateTime lastLogin;
+    private String activateCode;
 
     @Override
     public int compareTo(UserDto other) {

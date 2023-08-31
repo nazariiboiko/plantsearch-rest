@@ -41,9 +41,7 @@ public class UserServiceImpl implements UserService {
         userFromDb.setRefreshToken(refreshToken);
         userRepository.save(userFromDb);
 
-        AuthResponse response = new AuthResponse();
-        response.setJwtToken(token);
-        response.setRefreshToken(refreshToken);
+        AuthResponse response = new AuthResponse(token, refreshToken);
 
         return response;
     }

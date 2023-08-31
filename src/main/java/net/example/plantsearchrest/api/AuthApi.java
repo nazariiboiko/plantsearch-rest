@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface AuthApi {
     @ApiOperation("Log in")
     @ApiResponses({
-            @ApiResponse(code = 201, message = "Created"),
+            @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 400, message = "Bad request")
     })
     @PostMapping("/login")
@@ -26,7 +26,7 @@ public interface AuthApi {
 
     @ApiOperation("Sign up")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 201, message = "Created"),
             @ApiResponse(code = 400, message = "Bad request")
     })
     @PostMapping("/register")
@@ -48,7 +48,7 @@ public interface AuthApi {
                             @ApiParam(value = "language")
                             @RequestParam(defaultValue = "en") String language);
 
-    @ApiOperation("create a new jwt token via refreshToken")
+    @ApiOperation("Create a new jwt token via refreshToken")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 400, message = "Bad request")

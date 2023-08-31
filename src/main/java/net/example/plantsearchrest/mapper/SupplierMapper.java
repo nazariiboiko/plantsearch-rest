@@ -22,7 +22,7 @@ public interface SupplierMapper {
     SupplierDto mapEntityToDto(SupplierEntity source, @Context Pageable pageable);
 
     @Mapping(target = "avaliablePlants", ignore = true)
-    SupplierDto maptEntityToDtoIgnorePlants(SupplierEntity source);
+    SupplierDto mapEntityToDtoIgnorePlants(SupplierEntity source);
 
     @Mapping(target = "avaliablePlants", ignore = true)
     void updateSupplierEntity(SupplierDto from, @MappingTarget SupplierEntity to);

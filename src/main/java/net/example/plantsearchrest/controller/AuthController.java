@@ -50,7 +50,7 @@ public class AuthController implements AuthApi {
             userService.register(user);
             log.info("IN register - user {} has been created", userDto.getLogin());
             String message = messages.getMessage("CONFIRM_EMAIL", new Locale(lang));
-            return ResponseEntity.accepted().body(message);
+            return ResponseEntity.status(HttpStatus.CREATED).body(message);
         } catch (RegistryException e) {
             String message = messages.getMessage(e.getMessageCode(), new Locale(lang));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
