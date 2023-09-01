@@ -7,6 +7,7 @@ import net.example.plantsearchrest.entity.Role;
 import net.example.plantsearchrest.entity.Status;
 import net.example.plantsearchrest.entity.UserEntity;
 import net.example.plantsearchrest.exception.JwtAuthenticationException;
+import net.example.plantsearchrest.exception.NotFoundException;
 import net.example.plantsearchrest.model.AuthResponse;
 import net.example.plantsearchrest.service.UserService;
 import net.example.plantsearchrest.utils.RSAKeyUtil;
@@ -82,9 +83,9 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public AuthResponse createTokenByRefreshToken(String oldRefreshToken) throws JwtAuthenticationException {
+    public AuthResponse createTokenByRefreshToken(String oldRefreshToken) throws JwtAuthenticationException, NotFoundException {
         Claims claims = getClaimsFromRefreshToken(oldRefreshToken);
-        UserEntity user = userService.findByLogin(claims.getSubject());
+        UserEntity user = userService.findEntityByLogin(claims.getSubject());
         if(validateRefreshToken(oldRefreshToken, claims, user)) {
             log.info("User {}(id:{}) has renewed his jwt token.", user.getLogin(), user.getId());
             return userService.login(user.getLogin(), createToken(user.getLogin(), user.getRole()), createRefreshToken(user.getLogin()));
@@ -142,12 +143,12 @@ public class JwtTokenProvider {
                 .getBody();
     }
 
-    public AuthResponse authenticate(String loginOrEmail, String password) throws JwtAuthenticationException {
+    public AuthResponse authenticate(String loginOrEmail, String password) throws JwtAuthenticationException, NotFoundException {
         UserEntity userEntity;
         if(isValidEmail(loginOrEmail)) {
-            userEntity = userService.findByEmail(loginOrEmail);
+            userEntity = userService.findEntityByEmail(loginOrEmail);
         } else {
-            userEntity = userService.findByLogin(loginOrEmail);
+            userEntity = userService.findEntityByLogin(loginOrEmail);
         }
 
 

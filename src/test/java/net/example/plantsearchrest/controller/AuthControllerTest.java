@@ -72,7 +72,7 @@ public class AuthControllerTest {
         when(jwtTokenProvider.authenticate(anyString(), anyString()))
                 .thenThrow(new JwtAuthenticationException("Authentication failed","error.message"));
 
-        when(messages.getMessage(eq("error.message"), any(Locale.class)))
+        when(messages.getMessage(eq("error.message")))
                 .thenReturn("Authentication failed");
 
         mockMvc.perform(post(AUTH_URL + "/login")
@@ -92,8 +92,8 @@ public class AuthControllerTest {
                 .password("hardpassword")
                 .build();
 
-        when(userService.register(any(UserEntity.class))).thenReturn(new UserEntity());
-        when(messages.getMessage(eq("CONFIRM_EMAIL"), any(Locale.class)))
+        when(userService.register(any(UserEntity.class))).thenReturn(new UserDto());
+        when(messages.getMessage(eq("CONFIRM_EMAIL")))
                 .thenReturn("Please confirm your email.");
 
         mockMvc.perform(post(AUTH_URL + "/register")
@@ -112,7 +112,7 @@ public class AuthControllerTest {
                 .build();
 
         when(userService.register(any(UserEntity.class))).thenThrow(new RegistryException("User already exists","USER_ALREADY_EXISTS"));
-        when(messages.getMessage(eq("USER_ALREADY_EXISTS"), any(Locale.class)))
+        when(messages.getMessage(eq("USER_ALREADY_EXISTS")))
                 .thenReturn("User already exists.");
 
         mockMvc.perform(post(AUTH_URL + "/register")
@@ -150,7 +150,7 @@ public class AuthControllerTest {
                 .build();
 
         doThrow(new RegistryException("Activation code does not match", "INVALID_CODE")).when(userService).activate(any(),anyString());
-        when(messages.getMessage(eq("INVALID_CODE"), any(Locale.class)))
+        when(messages.getMessage(eq("INVALID_CODE")))
                 .thenReturn("Activation code does not match");
 
         mockMvc.perform(post(AUTH_URL + "/activate?code=123456")

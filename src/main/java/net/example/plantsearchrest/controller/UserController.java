@@ -6,6 +6,7 @@ import net.example.plantsearchrest.api.UserApi;
 import net.example.plantsearchrest.dto.SupplierDto;
 import net.example.plantsearchrest.dto.UserDto;
 import net.example.plantsearchrest.entity.Status;
+import net.example.plantsearchrest.exception.NotFoundException;
 import net.example.plantsearchrest.mapper.UserMapper;
 import net.example.plantsearchrest.model.SinglePage;
 import net.example.plantsearchrest.security.jwt.JwtUser;
@@ -41,8 +42,8 @@ public class UserController implements UserApi {
     }
 
     @Override
-    public UserDto getUserById(@PathVariable("id") Long id) {
-        UserDto user = userMapper.mapEntityToDto(userService.findById(id));
+    public UserDto getUserById(@PathVariable("id") Long id) throws NotFoundException {
+        UserDto user = userService.findById(id);
         return user;
     }
 

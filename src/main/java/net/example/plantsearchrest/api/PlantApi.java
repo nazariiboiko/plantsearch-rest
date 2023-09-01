@@ -46,7 +46,7 @@ public interface PlantApi {
     @GetMapping("/random")
     List<PlantPreviewDto> getRandomPlantList(
             @ApiParam(value = "Amount of random plants")
-            @RequestParam(value = "amount", required = false, defaultValue = "4") int amount);
+            @RequestParam(value = "amount", required = false, defaultValue = "1") int amount);
 
     @ApiOperation("Search all plants by name")
     @ApiResponses({

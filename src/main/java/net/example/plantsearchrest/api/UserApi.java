@@ -2,6 +2,7 @@ package net.example.plantsearchrest.api;
 
 import io.swagger.annotations.*;
 import net.example.plantsearchrest.dto.UserDto;
+import net.example.plantsearchrest.exception.NotFoundException;
 import net.example.plantsearchrest.model.SinglePage;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -42,7 +43,7 @@ public interface UserApi {
     @GetMapping("/id/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
     UserDto getUserById(
-            @ApiParam(value = "User username", required = true) @PathVariable("id") Long id);
+            @ApiParam(value = "User username", required = true) @PathVariable("id") Long id) throws NotFoundException;
 
     @ApiOperation("Update user")
     @PostMapping("/update")

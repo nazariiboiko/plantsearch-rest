@@ -44,7 +44,7 @@ public class SupplierController implements SupplierApi {
             SupplierDto dto = supplierService.createSupplier(supplierDto);
             return ResponseEntity.ok().body(dto);
         } catch (ServiceException e) {
-            String message = messages.getMessage(e.getMessageCode(), new Locale("uk"));
+            String message = messages.getMessage(e.getMessageCode());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
         }
     }
@@ -55,7 +55,7 @@ public class SupplierController implements SupplierApi {
             supplierService.deleteSupplier(id);
             return ResponseEntity.ok().build();
         } catch (ServiceException e) {
-            String message = messages.getMessage(e.getMessageCode(), new Locale("uk"));
+            String message = messages.getMessage(e.getMessageCode());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
         }
     }

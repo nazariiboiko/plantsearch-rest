@@ -54,4 +54,4 @@ Contributions to the Plant Search REST API are welcome! If you find any issues o
 For any questions or inquiries, please contact the project maintainer:
 
 - Name: [Nazarii Boiko](https://github.com/nazariiboiko)
-- Email: [nazariiboiko1@gmail.com](mailto:nazariiboiko2@gmail.com)
+- Email: [nazarii.boiko2@gmail.com](mailto:nazarii.boiko2@gmail.com)
