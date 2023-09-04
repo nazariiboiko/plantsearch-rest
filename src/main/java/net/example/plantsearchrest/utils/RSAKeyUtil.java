@@ -9,8 +9,18 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
+/**
+ * The RSAKeyUtil class provides utility methods for creating RSA public and private keys from encoded key strings.
+ */
 public class RSAKeyUtil {
 
+    /**
+     * Creates a PublicKey from an encoded key string.
+     *
+     * @param encodedKey The Base64-encoded string representing the public key.
+     * @return The PublicKey object created from the encoded key string.
+     * @throws RuntimeException if there is an error creating the PublicKey.
+     */
     public static PublicKey createPublicKey(String encodedKey) {
         try {
             byte[] publicKeyBytes = Base64.getDecoder().decode(encodedKey);
@@ -22,6 +32,13 @@ public class RSAKeyUtil {
         }
     }
 
+    /**
+     * Creates a PrivateKey from an encoded key string.
+     *
+     * @param privateKey The Base64-encoded string representing the private key.
+     * @return The PrivateKey object created from the encoded key string.
+     * @throws RuntimeException if there is an error creating the PrivateKey.
+     */
     public static PrivateKey createPrivateKey(String privateKey) {
         try {
             byte[] privateKeyBytes = Base64.getDecoder().decode(privateKey);

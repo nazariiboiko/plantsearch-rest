@@ -14,6 +14,10 @@ public class PlantPreviewDto implements Comparable<PlantPreviewDto> {
     private String image;
     private String sketch;
 
+    public PlantPreviewDto(long id) {
+        this.id = id;
+    }
+
     @Override
     public int compareTo(PlantPreviewDto other) {
         return this.getId().compareTo(other.getId());

@@ -1,6 +1,7 @@
 package net.example.plantsearchrest.api;
 
 import io.swagger.annotations.*;
+import net.example.plantsearchrest.exception.ServiceException;
 import net.example.plantsearchrest.model.SinglePage;
 import net.example.plantsearchrest.dto.SupplierDto;
 import org.springframework.data.domain.Pageable;
@@ -31,8 +32,10 @@ public interface SupplierApi {
     @ResponseStatus(HttpStatus.OK)
     SupplierDto getSupplierById(@ApiParam(value = "Supplier ID")
                                 @PathVariable long id,
-                                @ApiIgnore("Ignored because swagger ui shows the wrong params")
-                                Pageable pageable);
+                                @ApiParam(value = "Number of page")
+                                @RequestParam(value = "page", defaultValue = "0") int page,
+                                @ApiParam(value = "Size of page")
+                                @RequestParam(value = "size", defaultValue = "20") int size);
 
     @ApiOperation("Create a new supplier")
     @ApiResponses({
@@ -42,9 +45,9 @@ public interface SupplierApi {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    ResponseEntity<?> createSupplier(
+    ResponseEntity<SupplierDto> createSupplier(
             @ApiParam(value = "Supplier DTO")
-            @RequestBody SupplierDto supplierDto);
+            @RequestBody SupplierDto supplierDto) throws ServiceException;
 
     @ApiOperation("Delete supplier")
     @ApiResponses({
@@ -56,7 +59,7 @@ public interface SupplierApi {
     @PreAuthorize("hasAuthority('ADMIN')")
     ResponseEntity<?> deleteSupplier(
             @ApiParam(value = "Supplier ID")
-            @RequestParam Long id);
+            @RequestParam Long id) throws ServiceException;
 
     @ApiOperation("Create a new available plant for supplier")
     @ApiResponses({

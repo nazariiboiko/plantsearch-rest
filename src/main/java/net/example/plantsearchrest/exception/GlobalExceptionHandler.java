@@ -22,6 +22,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(RegistryException.class)
+    public ResponseEntity<Response> handleException(RegistryException e) {
+        Response response = new Response();
+        response.setMessage(messages.getMessage(e.getMessageCode()));
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Response> handleException(NotFoundException e) {
         Response response = new Response();
@@ -32,7 +39,21 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Response> handleException(AccessDeniedException e) {
         Response response = new Response();
-        response.setMessage("Access Denied.");
+        response.setMessage("Access Denied");
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<Response> handleException(BadRequestException e) {
+        Response response = new Response();
+        response.setMessage(messages.getMessage(e.getMessageCode()));
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(JwtAuthenticationException.class)
+    public ResponseEntity<Response> handleException(JwtAuthenticationException e) {
+        Response response = new Response();
+        response.setMessage(messages.getMessage(e.getMessageCode()));
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
  }

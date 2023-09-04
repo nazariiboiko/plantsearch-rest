@@ -64,7 +64,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto register(UserEntity userEntity) {
+    public UserDto register(UserDto userDto) {
+        UserEntity userEntity = userMapper.mapDtoToEntity(userDto);
+
         if(userRepository.findByLogin(userEntity.getLogin()) != null)
             throw new RegistryException("User already exists","USER_ALREADY_EXISTS");
         if(userRepository.findByEmail(userEntity.getEmail()) != null)

@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.example.plantsearchrest.dto.PlantDto;
 import net.example.plantsearchrest.dto.PlantPreviewDto;
 import net.example.plantsearchrest.entity.PlantEntity;
+import net.example.plantsearchrest.exception.NotFoundException;
 import net.example.plantsearchrest.mapper.PlantMapper;
 import net.example.plantsearchrest.model.PlantFilterModel;
 import net.example.plantsearchrest.repository.PlantRepository;
@@ -75,13 +76,13 @@ public class PlantServiceImpl implements PlantService {
     }
 
     @Override
-    public PlantDto getById(long id) {
+    public PlantDto getById(long id) throws NotFoundException {
         Optional<PlantEntity> entityOptional = plantRep.findById(id);
         if (entityOptional.isPresent()) {
             PlantEntity entity = entityOptional.get();
             return plantMapper.mapEntityToDto(entity);
         } else {
-            return null;
+            throw new NotFoundException("Plant not found.", "NOT_FOUND");
         }
     }
 

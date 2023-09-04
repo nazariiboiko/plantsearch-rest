@@ -16,7 +16,7 @@ import java.util.Map;
 public interface UserService {
     JwtUser getPrincipal();
     AuthResponse login(String username, String token, String refreshToken) throws JwtAuthenticationException, NotFoundException;
-    UserDto register(UserEntity userEntity);
+    UserDto register(UserDto userDto);
     List<UserDto> getAll();
     UserDto findByLogin(String username) throws NotFoundException;
     UserEntity findEntityByLogin(String username) throws NotFoundException;

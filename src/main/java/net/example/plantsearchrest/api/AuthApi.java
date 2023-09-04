@@ -7,6 +7,7 @@ import net.example.plantsearchrest.exception.NotFoundException;
 import net.example.plantsearchrest.exception.RegistryException;
 import net.example.plantsearchrest.model.AuthRefreshRequest;
 import net.example.plantsearchrest.model.AuthRequest;
+import net.example.plantsearchrest.model.AuthResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,8 +24,8 @@ public interface AuthApi {
             @ApiResponse(code = 404, message = "Not found"),
     })
     @PostMapping("/login")
-    ResponseEntity login(@ApiParam(value = "AuthRequest DTO")
-                         @RequestBody AuthRequest requestDto) throws NotFoundException;
+    ResponseEntity<AuthResponse> login(@ApiParam(value = "AuthRequest DTO")
+                         @RequestBody AuthRequest requestDto) throws NotFoundException, JwtAuthenticationException;
 
     @ApiOperation("Sign up")
     @ApiResponses({
@@ -32,8 +33,8 @@ public interface AuthApi {
             @ApiResponse(code = 400, message = "Bad request")
     })
     @PostMapping("/register")
-    ResponseEntity register(@ApiParam(value = "User DTO")
-                            @RequestBody UserDto userDto);
+    ResponseEntity<String> register(@ApiParam(value = "User DTO")
+                            @RequestBody UserDto userDto) throws RegistryException;
 
     @ApiOperation("Activate account")
     @ApiResponses({
@@ -41,10 +42,10 @@ public interface AuthApi {
             @ApiResponse(code = 400, message = "Bad request")
     })
     @PostMapping("/activate")
-    ResponseEntity activate(@ApiParam(value = "User DTO")
+    ResponseEntity<AuthResponse> activate(@ApiParam(value = "User DTO")
                             @RequestBody UserDto userDto,
                             @ApiParam(value = "Activation code")
-                            @RequestParam String code) throws RegistryException, NotFoundException;
+                            @RequestParam String code) throws RegistryException, NotFoundException, JwtAuthenticationException;
 
     @ApiOperation("Create a new jwt token via refreshToken")
     @ApiResponses({
@@ -52,7 +53,7 @@ public interface AuthApi {
             @ApiResponse(code = 400, message = "Bad request")
     })
     @PostMapping("/refresh")
-    ResponseEntity<?> refreshToken(
+    ResponseEntity<AuthResponse> refreshToken(
             @ApiParam(value = "Refresh token")
             @RequestBody AuthRefreshRequest request) throws JwtAuthenticationException, NotFoundException;
 

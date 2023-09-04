@@ -17,7 +17,15 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PlantEntityCriteriaBuilder {
 
+    /**
+     * Builds a dynamic query to filter plant entities based on the provided filter criteria.
+     *
+     * @param filter        The filter criteria used to construct the query.
+     * @param entityManager The EntityManager to execute the query.
+     * @return A list of PlantEntity objects that match the filter criteria.
+     */
     public static List<PlantEntity> buildQuery(PlantFilterModel filter, EntityManager entityManager) {
+        // Initialize criteria builder and query
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<PlantEntity> criteriaQuery = criteriaBuilder.createQuery(PlantEntity.class);
         Root<PlantEntity> root = criteriaQuery.from(PlantEntity.class);

@@ -3,6 +3,7 @@ package net.example.plantsearchrest.service;
 import net.example.plantsearchrest.dto.PlantDto;
 import net.example.plantsearchrest.dto.PlantPreviewDto;
 import net.example.plantsearchrest.entity.PlantEntity;
+import net.example.plantsearchrest.exception.NotFoundException;
 import net.example.plantsearchrest.model.PlantFilterModel;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,7 +13,7 @@ import java.util.List;
 
 public interface PlantService {
     List<PlantPreviewDto> getAll();
-    PlantDto getById(long id);
+    PlantDto getById(long id) throws NotFoundException;
     PlantEntity getEntityById(long id);
     List<PlantPreviewDto> getRandom(int amount);
     PlantDto getByName(String name);

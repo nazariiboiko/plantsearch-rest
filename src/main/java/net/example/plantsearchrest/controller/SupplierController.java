@@ -8,15 +8,13 @@ import net.example.plantsearchrest.exception.ServiceException;
 import net.example.plantsearchrest.model.SinglePage;
 import net.example.plantsearchrest.service.SupplierPlantService;
 import net.example.plantsearchrest.service.SupplierService;
-import net.example.plantsearchrest.utils.Messages;
 import net.example.plantsearchrest.utils.PageUtil;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Locale;
 
 @Slf4j
 @RestController
@@ -25,39 +23,34 @@ public class SupplierController implements SupplierApi {
 
     private final SupplierService supplierService;
     private final SupplierPlantService supPlantService;
-    private final Messages messages;
 
     @Override
     public SinglePage<SupplierDto> getSupplierList(Pageable pageable) {
         List<SupplierDto> list = supplierService.getAll();
+        log.info("IN getSupplierList - return {} of suppliers", list.size());
         return PageUtil.create(list, pageable.getPageNumber(), pageable.getPageSize());
     }
 
     @Override
-    public SupplierDto getSupplierById(long id, Pageable pageable) {
-        return supplierService.getById(id, pageable);
+    public SupplierDto getSupplierById(long id, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        SupplierDto dto = supplierService.getById(id, pageable);
+        log.info("IN getSupplierById - return {}(id:{})", dto.getName(), dto.getId());
+        return dto;
     }
 
     @Override
-    public ResponseEntity<?> createSupplier(SupplierDto supplierDto) {
-        try {
-            SupplierDto dto = supplierService.createSupplier(supplierDto);
-            return ResponseEntity.ok().body(dto);
-        } catch (ServiceException e) {
-            String message = messages.getMessage(e.getMessageCode());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
-        }
+    public ResponseEntity<SupplierDto> createSupplier(SupplierDto supplierDto) throws ServiceException {
+        SupplierDto dto = supplierService.createSupplier(supplierDto);
+        log.info("IN createSupplier - supplier with id:{} has been created", dto.getId());
+        return ResponseEntity.ok().body(dto);
     }
 
     @Override
-    public ResponseEntity<?> deleteSupplier(Long id) {
-        try {
-            supplierService.deleteSupplier(id);
-            return ResponseEntity.ok().build();
-        } catch (ServiceException e) {
-            String message = messages.getMessage(e.getMessageCode());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
-        }
+    public ResponseEntity<?> deleteSupplier(Long id) throws ServiceException {
+        supplierService.deleteSupplier(id);
+        log.info("IN deleteSupplier - supplier with id:{} has been deleted", id);
+        return ResponseEntity.ok().build();
     }
 
     @Override
@@ -75,7 +68,9 @@ public class SupplierController implements SupplierApi {
     }
 
     @Override
-    public ResponseEntity<?> getSupplierByPlant(Long plantId) {
-        return ResponseEntity.ok(supPlantService.findByPlant(plantId));
+    public ResponseEntity<List<SupplierDto>> getSupplierByPlant(Long plantId) {
+        List<SupplierDto> dtos = supPlantService.findByPlant(plantId);
+        log.info("IN getSupplierByPlant - return {} suppliers", dtos.size());
+        return ResponseEntity.ok(dtos);
     }
 }

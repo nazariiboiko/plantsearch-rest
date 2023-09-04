@@ -92,7 +92,7 @@ public class AuthControllerTest {
                 .password("hardpassword")
                 .build();
 
-        when(userService.register(any(UserEntity.class))).thenReturn(new UserDto());
+        when(userService.register(any(UserDto.class))).thenReturn(new UserDto());
         when(messages.getMessage(eq("CONFIRM_EMAIL")))
                 .thenReturn("Please confirm your email.");
 
@@ -111,7 +111,7 @@ public class AuthControllerTest {
                 .password("hardpassword")
                 .build();
 
-        when(userService.register(any(UserEntity.class))).thenThrow(new RegistryException("User already exists","USER_ALREADY_EXISTS"));
+        when(userService.register(any(UserDto.class))).thenThrow(new RegistryException("User already exists","USER_ALREADY_EXISTS"));
         when(messages.getMessage(eq("USER_ALREADY_EXISTS")))
                 .thenReturn("User already exists.");
 
@@ -160,7 +160,7 @@ public class AuthControllerTest {
                 .andExpect(content().string("Activation code does not match"));
     }
 
-    private static String asJsonString(Object obj) throws JsonProcessingException {
+    public static String asJsonString(Object obj) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(obj);
     }
