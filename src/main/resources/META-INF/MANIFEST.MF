@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: net.example.plantsearchrest.PlantSearchRestApplication
+Main-Class: net.nazariiboiko.plantsearch.PlantSearchApplication
 
