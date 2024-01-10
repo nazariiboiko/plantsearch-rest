@@ -2,6 +2,7 @@ package net.nazariiboiko.plantsearch.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.nazariiboiko.plantsearch.api.FavouriteApi;
 import net.nazariiboiko.plantsearch.dto.PlantPreviewDto;
 import net.nazariiboiko.plantsearch.security.jwt.JwtUser;
 import net.nazariiboiko.plantsearch.service.FavouriteService;
@@ -20,37 +21,34 @@ import java.util.AbstractList;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/favourites")
-public class FavouriteController {
+public class FavouriteController implements FavouriteApi {
     private final UserService userService;
     private final FavouriteService favouriteService;
 
-    @GetMapping()
+    @Override
     public ResponseEntity<Page<PlantPreviewDto>> getFavouritesByAccount(
-            @RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false, defaultValue = "20") int size
+             int page, int size
     ) {
         JwtUser user = userService.getPrincipal();
         Pageable pageable = PageRequest.of(page, size);
         Page<PlantPreviewDto> result = userService.getFavouritesByUserId(user.getId(), pageable);
-        log.info("int getFavouritesByAccount - return ");
+        log.info("IN getFavouritesByAccount - return ");
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/{plantId}")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Void> updateFavourite(@PathVariable Long plantId) {
+    @Override
+    public ResponseEntity<Void> updateFavourite(Long plantId) {
         JwtUser user = userService.getPrincipal();
         favouriteService.changeLikeStatement(plantId, user.getId());
-        log.info("");
+        log.info("IN updateFavourite - ");
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/check/{plantId}")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Boolean> isLikedByUser(@PathVariable Long plantId) {
+    @Override
+    public ResponseEntity<Boolean> isLikedByUser(Long plantId) {
         JwtUser user = userService.getPrincipal();
         boolean result = favouriteService.getLikeStatement(plantId, user.getId());
-        log.info("IN isLikedByUser");
-        return new ResponseEntity<Boolean>(result, HttpStatus.OK);
+        log.info("IN isLikedByUser - ");
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

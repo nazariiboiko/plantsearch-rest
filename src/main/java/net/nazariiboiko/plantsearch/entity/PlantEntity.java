@@ -63,10 +63,10 @@ public class PlantEntity extends BaseEntity {
     @Column(name="zoning")
     private String zoning;
 
-    @Column(name="pH")
+    @Column(name="ph")
     private String ph;
 
-    @Column(name="soilMoisture")
+    @Column(name="soil_moisture")
     private String soilMoisture;
 
     @Column(name="hardy")

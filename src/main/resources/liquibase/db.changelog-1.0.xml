@@ -3,8 +3,101 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
+    <changeSet id="1.0.0" author="nazarii.boiko" labels="main tables">
+        <createTable tableName="plants">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
 
-    <changeSet id="1.0.0" author="nazarii.boiko" labels="users">
+            <column name="ua_name" type="VARCHAR(150)">
+                <constraints nullable="true" unique="false" />
+            </column>
+
+            <column name="la_name" type="VARCHAR(150)">
+                <constraints nullable="true" unique="false" />
+            </column>
+
+            <column name="height" type="VARCHAR(50)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="habitus" type="VARCHAR(50)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="growth_rate" type="VARCHAR(50)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="color" type="VARCHAR(50)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="summer_color" type="VARCHAR(50)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="autumn_color" type="VARCHAR(50)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="flowering_color" type="VARCHAR(50)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="frost_resistance" type="VARCHAR(50)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="sketch" type="VARCHAR(50)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="image" type="VARCHAR(50)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="place_recommendation" type="VARCHAR(50)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="lighting" type="VARCHAR(50)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="evergreen" type="VARCHAR(50)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="flowering_period" type="VARCHAR(50)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="plant_type" type="VARCHAR(50)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="zoning" type="VARCHAR(50)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="ph" type="VARCHAR(50)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="soil_moisture" type="VARCHAR(50)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="hardy" type="VARCHAR(50)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="nutrition" type="VARCHAR(50)">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+
         <createTable tableName="users">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -29,10 +122,24 @@
             <column type="VARCHAR(25)" name="role" defaultValue="USER">
                 <constraints nullable="false"/>
             </column>
-        </createTable>
-    </changeSet>
 
-    <changeSet id="1.0.1" author="nazarii.boiko" labels="supplier">
+            <column name="registration_date" type="date">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="last_login" type="timestamp">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="activate_code" type="VARCHAR(6)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="refresh_token" type="VARCHAR">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+
         <createTable tableName="supplier">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -43,7 +150,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="1.0.2" author="nazarii.boiko" labels="supplier_plant">
+    <changeSet id="1.0.1" author="nazarii.boiko" labels="supplier_plant">
         <createTable tableName="supplier_plant">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -64,7 +171,7 @@
                                  constraintName="supplier_plant_plant_fk" onDelete="CASCADE"/>
     </changeSet>
 
-    <changeSet id="1.0.3" author="nazarii.boiko" labels="favourite">
+    <changeSet id="1.0.2" author="nazarii.boiko" labels="favourite">
         <createTable tableName="favourite">
             <column name="id" type="int" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -82,25 +189,5 @@
         <addForeignKeyConstraint baseTableName="favourite" baseColumnNames="user_id"
                                  referencedTableName="users" referencedColumnNames="id"
                                  constraintName="favourite_users_users_fk" onDelete="CASCADE"/>
-
-        <addColumn tableName="users">
-            <column name="registration_date" type="date"/>
-        </addColumn>
-
-        <addColumn tableName="users">
-            <column name="last_login" type="timestamp"/>
-        </addColumn>
-
-    </changeSet>
-    <changeSet id="1.0.4" author="nazarii.boiko" labels="user-activation-code">
-        <addColumn tableName="users">
-            <column name="activate_code" type="VARCHAR(6)"/>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="1.0.5" author="nazarii.boiko" labels="user-activation-code">
-        <addColumn tableName="users">
-            <column name="refresh_token" type="VARCHAR"/>
-        </addColumn>
     </changeSet>
 </databaseChangeLog>
