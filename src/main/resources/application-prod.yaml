@@ -37,6 +37,7 @@ s3:
     type:
       image: images
       sketch: sketches
+      markers: markers
 
 jwt:
   password:
